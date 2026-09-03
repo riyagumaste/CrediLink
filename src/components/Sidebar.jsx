@@ -24,7 +24,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
-          to="/transactions/new"
+          to="/transactions"
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
@@ -46,7 +46,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
-          to="/counterparty"
+          to="/counterparty-profile"
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
@@ -56,7 +56,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
-          to="/exposure"
+          to="/exposure-review"
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }

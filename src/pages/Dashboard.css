@@ -1,7 +1,6 @@
-/* =========================
-   CREDI DASHBOARD
-   DARK BLUE + GOLD THEME
-========================= */
+/* Credi Dashboard
+   Dark blue and gold theme
+*/
 
 .dashboard {
   min-height: 100vh;
@@ -11,9 +10,7 @@
 }
 
 
-/* =========================
-   HEADER
-========================= */
+/* Header */
 
 .dashboard-header {
   display: flex;
@@ -45,9 +42,7 @@
 }
 
 
-/* =========================
-   PROFILE
-========================= */
+/* Profile */
 
 .profile {
   text-align: right;
@@ -66,18 +61,14 @@
 }
 
 
-/* =========================
-   MAIN CONTENT
-========================= */
+/* Main dashboard content */
 
 .dashboard-content {
   padding: 50px;
 }
 
 
-/* =========================
-   WELCOME SECTION
-========================= */
+/* Welcome section */
 
 .welcome-section {
   margin-bottom: 35px;
@@ -98,9 +89,7 @@
 }
 
 
-/* =========================
-   STAT CARDS
-========================= */
+/* Statistics cards */
 
 .stats-grid {
   display: grid;
@@ -153,9 +142,7 @@
 }
 
 
-/* =========================
-   INSIGHTS
-========================= */
+/* Credi insights */
 
 .insights-section h2 {
   color: #f5f1e8;
@@ -176,38 +163,20 @@
 }
 
 
-/* =========================
-   RESPONSIVE DESIGN
-========================= */
-
-@media (max-width: 900px) {
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-header {
-    padding: 20px;
-  }
-
-  .dashboard-content {
-    padding: 30px 20px;
-  }
-}
-/* ============================= */
-/* DASHBOARD NAVIGATION */
-/* ============================= */
+/* Dashboard navigation */
 
 .dashboard-nav {
   display: flex;
   align-items: center;
+
   gap: 8px;
 
   padding: 12px 32px;
 
-  background: #0a1726;
-  border-top: 1px solid #1d2c40;
-  border-bottom: 1px solid #1d2c40;
+  background: #07111f;
+
+  border-top: 1px solid #17283b;
+  border-bottom: 1px solid #17283b;
 
   overflow-x: auto;
 }
@@ -218,6 +187,7 @@
   border-radius: 7px;
 
   color: #9ba9ba;
+
   text-decoration: none;
 
   font-size: 13px;
@@ -225,23 +195,25 @@
 
   white-space: nowrap;
 
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .nav-link:hover {
   color: #f4f7fb;
-  background: #112238;
+
+  background: #0d1a2b;
 }
 
 .nav-link.active {
   color: #07111f;
+
   background: #d4af37;
 }
 
 
-/* ============================= */
-/* QUICK ACTIONS */
-/* ============================= */
+/* Quick actions */
 
 .quick-actions {
   margin-top: 35px;
@@ -251,16 +223,13 @@
   margin-bottom: 18px;
 }
 
-
 .quick-action-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 
   gap: 16px;
 }
-
 
 .quick-action-card {
   display: flex;
@@ -280,38 +249,50 @@
   transition: 0.2s ease;
 }
 
-
 .quick-action-card:hover {
   border-color: #d4af37;
+
   transform: translateY(-2px);
 }
 
-
 .quick-action-card strong {
   color: #f4f7fb;
+
   font-size: 15px;
 }
 
-
 .quick-action-card span {
   color: #718094;
+
   font-size: 13px;
+
   line-height: 1.5;
 }
 
 
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
+/* Responsive dashboard layout */
 
 @media (max-width: 900px) {
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    padding: 20px;
+  }
+
+  .dashboard-content {
+    padding: 30px 20px;
+  }
 
   .quick-action-grid {
     grid-template-columns: 1fr 1fr;
   }
-
 }
 
+
+/* Responsive navigation */
 
 @media (max-width: 600px) {
 
