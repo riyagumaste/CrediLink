@@ -1,0 +1,197 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #07111f;
+  color: #f4f7fb;
+}
+
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  background: #091625;
+  border-right: 1px solid #1d2c40;
+
+  padding: 28px 18px;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+
+/* LOGO */
+
+.sidebar-logo {
+  padding: 0 12px 28px;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.sidebar-logo h1 {
+  margin: 0;
+
+  color: #d4af37;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.sidebar-logo span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #718094;
+
+  font-size: 11px;
+}
+
+
+/* NAVIGATION */
+
+.sidebar-nav {
+  flex: 1;
+
+  padding-top: 25px;
+}
+
+.nav-section {
+  margin: 20px 12px 8px;
+
+  color: #65758a;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.nav-section:first-child {
+  margin-top: 0;
+}
+
+
+/* NAV ITEM */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 4px;
+  padding: 11px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  color: #9ba9ba;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.nav-item span {
+  width: 20px;
+
+  display: inline-flex;
+  justify-content: center;
+
+  color: #718094;
+
+  font-size: 15px;
+}
+
+.nav-item:hover {
+  background: #0d1a2b;
+  color: #f4f7fb;
+}
+
+.nav-item:hover span {
+  color: #d4af37;
+}
+
+
+/* ACTIVE PAGE */
+
+.nav-item.active {
+  background: #101f32;
+
+  border-color: #26374b;
+
+  color: #f4f7fb;
+}
+
+.nav-item.active span {
+  color: #d4af37;
+}
+
+
+/* FOOTER */
+
+.sidebar-footer {
+  padding: 18px 12px 0;
+
+  border-top: 1px solid #1d2c40;
+}
+
+.sidebar-footer span {
+  display: block;
+
+  color: #d4af37;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sidebar-footer small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #58687b;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+
+/* MAIN CONTENT */
+
+.app-main {
+  width: calc(100% - 250px);
+  min-height: 100vh;
+
+  margin-left: 250px;
+
+  box-sizing: border-box;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+  .sidebar {
+    width: 210px;
+  }
+
+  .app-main {
+    width: calc(100% - 210px);
+    margin-left: 210px;
+  }
+}

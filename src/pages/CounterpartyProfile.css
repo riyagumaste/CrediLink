@@ -1,0 +1,351 @@
+.counterparty-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #07111f;
+  color: #f4f7fb;
+}
+
+.counterparty-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.counterparty-header h1 {
+  margin: 6px 0 10px;
+  font-size: 34px;
+}
+
+.counterparty-header p {
+  color: #9ba9ba;
+}
+
+.eyebrow,
+.section-label {
+  color: #d4af37 !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.verified-badge {
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 10px 17px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.counterparty-card {
+  background: #0d1a2b;
+  border: 1px solid #1d2c40;
+  border-radius: 14px;
+}
+
+
+/* IDENTITY */
+
+.identity-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.company-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #16263a;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.company-info h2 {
+  margin: 4px 0;
+}
+
+.company-info span {
+  color: #7f8da0;
+}
+
+.relationship {
+  text-align: right;
+}
+
+.relationship span {
+  display: block;
+  color: #7f8da0;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.relationship strong {
+  color: #d4af37;
+}
+
+
+/* OVERVIEW */
+
+.counterparty-overview {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.score-card,
+.metrics-card {
+  padding: 30px;
+}
+
+.score-display {
+  margin: 20px 0 5px;
+}
+
+.score-display strong {
+  font-size: 60px;
+  color: #d4af37;
+}
+
+.score-display span {
+  color: #77879a;
+}
+
+.score-status {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #342d1d;
+  color: #d4af37;
+  font-size: 13px;
+}
+
+.score-card > p:last-child {
+  color: #8998aa;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+
+/* METRICS */
+
+.metrics-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 30px;
+}
+
+.cp-metric {
+  padding: 20px 0;
+  border-bottom: 1px solid #1d2c40;
+
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cp-metric span {
+  color: #8998aa;
+  font-size: 14px;
+}
+
+.cp-metric strong {
+  font-size: 24px;
+}
+
+
+/* TRANSACTIONS */
+
+.transaction-section {
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  margin: 5px 0 0;
+}
+
+.transaction-count {
+  color: #8998aa;
+  font-size: 14px;
+}
+
+.transaction-table {
+  width: 100%;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr 1fr 0.7fr;
+  gap: 15px;
+  align-items: center;
+}
+
+.table-header {
+  padding: 12px 15px;
+  color: #718094;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.table-row {
+  padding: 17px 15px;
+  border-top: 1px solid #1d2c40;
+  color: #aeb9c7;
+}
+
+.invoice-number {
+  color: #f4f7fb;
+  font-weight: 600;
+}
+
+.status-paid {
+  color: #66c89b;
+}
+
+.status-delayed {
+  color: #d4af37;
+}
+
+
+/* RISK */
+
+.risk-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.risk-card,
+.explain-card {
+  padding: 30px;
+}
+
+.risk-item {
+  display: flex;
+  gap: 15px;
+  padding: 18px 0;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.risk-item:last-child {
+  border-bottom: none;
+}
+
+.risk-item > span {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 700;
+}
+
+.risk-item strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.risk-item p {
+  margin: 0;
+  color: #8998aa;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.risk-item.positive > span {
+  background: #17372d;
+  color: #66c89b;
+}
+
+.risk-item.warning > span {
+  background: #3a3020;
+  color: #d4af37;
+}
+
+.explain-card > p:not(.section-label) {
+  color: #8998aa;
+  line-height: 1.6;
+}
+
+.rating-breakdown {
+  margin-top: 25px;
+}
+
+.rating-breakdown div {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.rating-breakdown span {
+  color: #8998aa;
+}
+
+.rating-breakdown strong {
+  color: #d4af37;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+
+  .counterparty-page {
+    padding: 20px;
+  }
+
+  .counterparty-header,
+  .identity-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .relationship {
+    text-align: left;
+  }
+
+  .counterparty-overview,
+  .risk-section {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-card {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-section {
+    overflow-x: auto;
+  }
+
+  .transaction-table {
+    min-width: 700px;
+  }
+}

@@ -1,7 +1,7 @@
-/* =========================
+/* 
    CREDI DASHBOARD
    DARK BLUE + GOLD THEME
-========================= */
+ */
 
 .dashboard {
   min-height: 100vh;
@@ -11,9 +11,9 @@
 }
 
 
-/* =========================
+/* 
    HEADER
-========================= */
+ */
 
 .dashboard-header {
   display: flex;
@@ -45,9 +45,9 @@
 }
 
 
-/* =========================
+/* 
    PROFILE
-========================= */
+ */
 
 .profile {
   text-align: right;
@@ -66,18 +66,18 @@
 }
 
 
-/* =========================
+/* 
    MAIN CONTENT
-========================= */
+ */
 
 .dashboard-content {
   padding: 50px;
 }
 
 
-/* =========================
+/* 
    WELCOME SECTION
-========================= */
+ */
 
 .welcome-section {
   margin-bottom: 35px;
@@ -98,9 +98,9 @@
 }
 
 
-/* =========================
+/* 
    STAT CARDS
-========================= */
+ */
 
 .stats-grid {
   display: grid;
@@ -153,9 +153,9 @@
 }
 
 
-/* =========================
+/* 
    INSIGHTS
-========================= */
+ */
 
 .insights-section h2 {
   color: #f5f1e8;
@@ -176,9 +176,9 @@
 }
 
 
-/* =========================
+/* 
    RESPONSIVE DESIGN
-========================= */
+ */
 
 @media (max-width: 900px) {
 
@@ -193,4 +193,134 @@
   .dashboard-content {
     padding: 30px 20px;
   }
+}
+/* ==== */
+/* DASHBOARD NAVIGATION */
+/* ==== */
+
+.dashboard-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 32px;
+
+  background: #0a1726;
+  border-top: 1px solid #1d2c40;
+  border-bottom: 1px solid #1d2c40;
+
+  overflow-x: auto;
+}
+
+.nav-link {
+  padding: 10px 16px;
+
+  border-radius: 7px;
+
+  color: #9ba9ba;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #f4f7fb;
+  background: #112238;
+}
+
+.nav-link.active {
+  color: #07111f;
+  background: #d4af37;
+}
+
+
+/* ==== */
+/* QUICK ACTIONS */
+/* ==== */
+
+.quick-actions {
+  margin-top: 35px;
+}
+
+.quick-actions h2 {
+  margin-bottom: 18px;
+}
+
+
+.quick-action-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 16px;
+}
+
+
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  padding: 20px;
+
+  background: #0d1a2b;
+
+  border: 1px solid #1d2c40;
+  border-radius: 10px;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+
+.quick-action-card:hover {
+  border-color: #d4af37;
+  transform: translateY(-2px);
+}
+
+
+.quick-action-card strong {
+  color: #f4f7fb;
+  font-size: 15px;
+}
+
+
+.quick-action-card span {
+  color: #718094;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* ==== */
+/* RESPONSIVE */
+/* ==== */
+
+@media (max-width: 900px) {
+
+  .quick-action-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .dashboard-nav {
+    padding: 10px 16px;
+  }
+
+  .quick-action-grid {
+    grid-template-columns: 1fr;
+  }
+
 }

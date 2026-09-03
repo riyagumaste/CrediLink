@@ -1,0 +1,416 @@
+.lender-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #07111f;
+  color: #f4f7fb;
+}
+
+.lender-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.lender-header h1 {
+  margin: 6px 0 10px;
+  font-size: 34px;
+}
+
+.lender-header p {
+  color: #9ba9ba;
+}
+
+.eyebrow,
+.section-label {
+  color: #d4af37 !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.decision-badge {
+  text-align: right;
+  color: #718094;
+  font-size: 13px;
+}
+
+.decision-badge strong {
+  display: block;
+  margin-top: 5px;
+  color: #66c89b;
+  font-size: 18px;
+}
+
+
+/* CARD */
+
+.lender-card {
+  background: #0d1a2b;
+  border: 1px solid #1d2c40;
+  border-radius: 14px;
+}
+
+
+/* BORROWER */
+
+.borrower-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.borrower-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #16263a;
+  border: 1px solid #d4af37;
+
+  color: #d4af37;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.borrower-info {
+  flex: 1;
+}
+
+.borrower-info h2 {
+  margin: 5px 0;
+}
+
+.borrower-info span {
+  color: #718094;
+  font-size: 13px;
+}
+
+.profile-status {
+  text-align: right;
+}
+
+.profile-status span {
+  display: block;
+  color: #718094;
+  font-size: 13px;
+}
+
+.profile-status strong {
+  display: block;
+  color: #66c89b;
+  margin-top: 5px;
+}
+
+
+/* OVERVIEW */
+
+.lender-overview {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.score-panel,
+.indicators-panel {
+  padding: 30px;
+}
+
+.lender-score {
+  margin: 20px 0 5px;
+}
+
+.lender-score strong {
+  font-size: 62px;
+  color: #d4af37;
+}
+
+.lender-score span {
+  color: #718094;
+}
+
+.score-label {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 20px;
+
+  background: #17372d;
+  color: #66c89b;
+
+  font-size: 13px;
+}
+
+.score-panel > p:last-child {
+  color: #8998aa;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+
+/* INDICATORS */
+
+.indicator-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 15px;
+}
+
+.indicator {
+  padding: 20px 15px;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.indicator span {
+  display: block;
+  color: #8998aa;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.indicator strong {
+  display: block;
+  font-size: 23px;
+}
+
+.indicator small {
+  color: #66c89b;
+  display: block;
+  margin-top: 5px;
+}
+
+
+/* FINANCIAL */
+
+.financial-section {
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  margin: 5px 0 0;
+}
+
+.financial-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 20px;
+}
+
+.financial-grid div {
+  padding: 20px;
+  border-right: 1px solid #1d2c40;
+}
+
+.financial-grid div:last-child {
+  border-right: none;
+}
+
+.financial-grid span {
+  display: block;
+  color: #8998aa;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.financial-grid strong {
+  font-size: 23px;
+}
+
+
+/* ASSESSMENT */
+
+.assessment-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.assessment-card,
+.decision-card {
+  padding: 30px;
+}
+
+.assessment-item {
+  display: flex;
+  gap: 15px;
+  padding: 18px 0;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.assessment-item:last-child {
+  border-bottom: none;
+}
+
+.assessment-item > span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 700;
+}
+
+.assessment-item.positive > span {
+  background: #17372d;
+  color: #66c89b;
+}
+
+.assessment-item.warning > span {
+  background: #342d1d;
+  color: #d4af37;
+}
+
+.assessment-item strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.assessment-item p {
+  margin: 0;
+  color: #8998aa;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* DECISION */
+
+.risk-level {
+  margin: 25px 0 12px;
+}
+
+.risk-level strong {
+  display: block;
+  font-size: 27px;
+  color: #d4af37;
+}
+
+.risk-level span {
+  color: #718094;
+  font-size: 13px;
+}
+
+.risk-meter {
+  height: 8px;
+  background: #1b2939;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.risk-meter div {
+  width: 35%;
+  height: 100%;
+  background: #66c89b;
+}
+
+.decision-card > p:not(.section-label) {
+  color: #8998aa;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+.decision-card button {
+  margin-top: 10px;
+
+  padding: 11px 18px;
+
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #d4af37;
+
+  cursor: pointer;
+}
+
+.decision-card button:hover {
+  background: #d4af37;
+  color: #07111f;
+}
+
+
+/* NOTE */
+
+.lender-note {
+  padding: 20px 25px;
+
+  background: #0d1a2b;
+  border: 1px solid #1d2c40;
+  border-radius: 14px;
+}
+
+.lender-note strong {
+  color: #d4af37;
+}
+
+.lender-note p {
+  color: #718094;
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .lender-page {
+    padding: 20px;
+  }
+
+  .lender-header {
+    flex-direction: column;
+  }
+
+  .decision-badge {
+    text-align: left;
+  }
+
+  .lender-overview,
+  .assessment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .financial-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .financial-grid div:nth-child(2) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 550px) {
+
+  .indicator-grid,
+  .financial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .financial-grid div {
+    border-right: none;
+  }
+
+  .borrower-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .profile-status {
+    text-align: left;
+    margin-left: 80px;
+  }
+}

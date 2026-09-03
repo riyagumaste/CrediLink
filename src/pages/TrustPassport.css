@@ -1,0 +1,759 @@
+/* =========================================
+   CREDI — TRUST PASSPORT
+   BLUE + GOLD DESIGN
+   ========================================= */
+
+.trust-passport {
+  min-height: 100vh;
+  padding: 42px 52px 70px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(212, 175, 55, 0.07),
+      transparent 30%
+    ),
+    #081525;
+
+  color: #f4f7fb;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.trust-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 40px;
+
+  margin-bottom: 30px;
+}
+
+.trust-header h1 {
+  margin: 7px 0 10px;
+
+  color: #f4f7fb;
+
+  font-size: 40px;
+  line-height: 1.15;
+  font-weight: 700;
+
+  letter-spacing: -1px;
+}
+
+.trust-header > div:first-child > p:last-child {
+  margin: 0;
+
+  max-width: 720px;
+
+  color: #9eacbd;
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   EYEBROW / LABELS
+   ========================================= */
+
+.eyebrow,
+.section-label {
+  margin: 0;
+
+  color: #d4af37;
+
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.section-label {
+  margin-bottom: 8px;
+}
+
+
+/* =========================================
+   VERIFIED BADGE
+   ========================================= */
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 10px 16px;
+
+  color: #d4af37;
+
+  background: rgba(212, 175, 55, 0.08);
+
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   BUSINESS CARD
+   ========================================= */
+
+.business-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 30px;
+
+  padding: 26px 30px;
+
+  margin-bottom: 22px;
+
+  background: #0d1f35;
+
+  border: 1px solid #1d3550;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.business-card h2 {
+  margin: 0 0 6px;
+
+  color: #f4f7fb;
+
+  font-size: 25px;
+  line-height: 1.25;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.business-id {
+  margin: 0;
+
+  color: #7f90a4;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.business-status {
+  min-width: 130px;
+
+  padding-left: 25px;
+
+  border-left: 1px solid #253b53;
+
+  text-align: right;
+}
+
+.business-status span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #8797aa;
+
+  font-size: 12px;
+}
+
+.business-status strong {
+  color: #d4af37;
+
+  font-size: 17px;
+
+  text-transform: capitalize;
+}
+
+
+/* =========================================
+   TRUST OVERVIEW
+   ========================================= */
+
+.trust-overview {
+  display: grid;
+
+  grid-template-columns: 1.15fr 1fr;
+
+  gap: 22px;
+
+  margin-bottom: 22px;
+}
+
+
+/* =========================================
+   TRUST SCORE CARD
+   ========================================= */
+
+.trust-score-card {
+  padding: 30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #102742,
+      #0d1f35
+    );
+
+  border: 1px solid #1d4162;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.score-circle {
+  display: flex;
+  align-items: baseline;
+
+  gap: 5px;
+
+  margin: 18px 0 10px;
+}
+
+.score-circle span {
+  color: #d4af37;
+
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 700;
+
+  letter-spacing: -2px;
+}
+
+.score-circle small {
+  color: #7f90a4;
+
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.trust-score-card h3 {
+  margin: 0 0 8px;
+
+  color: #f4f7fb;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.trust-score-card > p:last-child {
+  margin: 0;
+
+  max-width: 560px;
+
+  color: #9eacbd;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+
+/* =========================================
+   METRICS CARD
+   ========================================= */
+
+.metrics-card {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  overflow: hidden;
+
+  background: #0d1f35;
+
+  border: 1px solid #1d3550;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;
+
+  padding: 25px;
+
+  background: #0d1f35;
+}
+
+.metric:not(:last-child) {
+  border-right: 1px solid #253b53;
+}
+
+.metric span {
+  margin-bottom: 10px;
+
+  color: #8d9daf;
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.metric strong {
+  color: #d4af37;
+
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================
+   TRUST FACTORS
+   ========================================= */
+
+.trust-factors {
+  padding: 28px 30px;
+
+  margin-bottom: 22px;
+
+  background: #0d1f35;
+
+  border: 1px solid #1d3550;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  color: #f4f7fb;
+
+  font-size: 22px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   FACTOR GRID
+   ========================================= */
+
+.factor-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 16px;
+}
+
+.factor-card {
+  padding: 20px;
+
+  background: #0a192b;
+
+  border: 1px solid #1b344d;
+  border-radius: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.factor-card:hover {
+  border-color: #315675;
+
+  transform: translateY(-2px);
+}
+
+.factor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 20px;
+
+  margin-bottom: 15px;
+}
+
+.factor-top h3 {
+  margin: 0 0 5px;
+
+  color: #f4f7fb;
+
+  font-size: 15px;
+  line-height: 1.3;
+  font-weight: 650;
+}
+
+.factor-top p {
+  margin: 0;
+
+  color: #8e9daf;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.factor-top > strong {
+  flex-shrink: 0;
+
+  color: #d4af37;
+
+  font-size: 20px;
+  line-height: 1;
+}
+
+
+/* =========================================
+   PROGRESS BAR
+   ========================================= */
+
+.progress-track {
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  background: #172b40;
+
+  border-radius: 999px;
+}
+
+.progress-fill {
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #b9962e,
+      #d4af37
+    );
+
+  border-radius: inherit;
+}
+
+
+/* =========================================
+   EXPLAINABILITY
+   ========================================= */
+
+.explainability {
+  display: grid;
+
+  grid-template-columns: 0.9fr 1.1fr;
+
+  gap: 35px;
+
+  padding: 30px;
+
+  margin-bottom: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #102742,
+      #0d1f35
+    );
+
+  border: 1px solid #1d4162;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.explainability h2 {
+  margin: 0 0 10px;
+
+  color: #f4f7fb;
+
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.explain-description {
+  margin: 0;
+
+  max-width: 450px;
+
+  color: #9eacbd;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+
+/* =========================================
+   EVIDENCE LIST
+   ========================================= */
+
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.evidence {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  border: 1px solid #1b344d;
+  border-radius: 10px;
+}
+
+.evidence > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 23px;
+  height: 23px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.evidence p {
+  margin: 1px 0 0;
+
+  color: #9eacbd;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.evidence p strong {
+  color: #f4f7fb;
+}
+
+
+/* =========================================
+   POSITIVE EVIDENCE
+   ========================================= */
+
+.evidence.positive > span {
+  color: #d4af37;
+
+  background: rgba(212, 175, 55, 0.12);
+
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+
+/* =========================================
+   WARNING EVIDENCE
+   ========================================= */
+
+.evidence.warning {
+  border-color: rgba(212, 175, 55, 0.28);
+
+  background: rgba(212, 175, 55, 0.035);
+}
+
+.evidence.warning > span {
+  color: #d4af37;
+
+  background: rgba(212, 175, 55, 0.12);
+
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+
+/* =========================================
+   RESPONSIVE — TABLET
+   ========================================= */
+
+@media (max-width: 1100px) {
+
+  .trust-passport {
+    padding: 32px;
+  }
+
+  .trust-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .explainability {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================
+   RESPONSIVE — SMALL TABLET
+   ========================================= */
+
+@media (max-width: 800px) {
+
+  .trust-passport {
+    padding: 26px 20px 50px;
+  }
+
+  .trust-header {
+    flex-direction: column;
+
+    gap: 18px;
+  }
+
+  .trust-header h1 {
+    font-size: 32px;
+  }
+
+  .verification-badge {
+    align-self: flex-start;
+  }
+
+  .business-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .business-status {
+    width: 100%;
+
+    padding: 15px 0 0;
+
+    text-align: left;
+
+    border-left: none;
+    border-top: 1px solid #253b53;
+  }
+
+  .metrics-card {
+    grid-template-columns: 1fr;
+  }
+
+  .metric:not(:last-child) {
+    border-right: none;
+
+    border-bottom: 1px solid #253b53;
+  }
+
+  .factor-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================
+   RESPONSIVE — MOBILE
+   ========================================= */
+
+@media (max-width: 500px) {
+
+  .trust-passport {
+    padding: 22px 14px 40px;
+  }
+
+  .trust-header h1 {
+    font-size: 27px;
+
+    letter-spacing: -0.6px;
+  }
+
+  .trust-header > div:first-child > p:last-child {
+    font-size: 14px;
+  }
+
+  .business-card,
+  .trust-score-card,
+  .trust-factors,
+  .explainability {
+    padding: 22px 18px;
+  }
+
+  .business-card h2 {
+    font-size: 21px;
+  }
+
+  .score-circle span {
+    font-size: 52px;
+  }
+
+  .score-circle small {
+    font-size: 17px;
+  }
+
+  .trust-score-card h3 {
+    font-size: 18px;
+  }
+
+  .metric {
+    padding: 20px;
+  }
+
+  .metric strong {
+    font-size: 25px;
+  }
+
+  .factor-card {
+    padding: 17px;
+  }
+
+  .factor-top {
+    gap: 12px;
+  }
+
+  .explainability h2 {
+    font-size: 21px;
+  }
+
+}
+
+
+/* =========================================
+   SAFETY — PREVENT HORIZONTAL OVERFLOW
+   ========================================= */
+
+.trust-passport *,
+.trust-passport *::before,
+.trust-passport *::after {
+  box-sizing: border-box;
+}
+
+.trust-passport img,
+.trust-passport svg {
+  max-width: 100%;
+}

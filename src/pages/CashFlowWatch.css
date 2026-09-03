@@ -1,0 +1,371 @@
+.cashflow-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #07111f;
+  color: #f4f7fb;
+}
+
+.cashflow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.cashflow-header h1 {
+  margin: 6px 0 10px;
+  font-size: 34px;
+}
+
+.cashflow-header p {
+  color: #9ba9ba;
+}
+
+.eyebrow,
+.section-label {
+  color: #d4af37 !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.cash-health {
+  text-align: right;
+  color: #7f8da0;
+  font-size: 13px;
+}
+
+.cash-health strong {
+  display: block;
+  color: #66c89b;
+  font-size: 18px;
+  margin-top: 5px;
+}
+
+
+/* CARDS */
+
+.cash-card {
+  background: #0d1a2b;
+  border: 1px solid #1d2c40;
+  border-radius: 14px;
+}
+
+
+/* SUMMARY */
+
+.cash-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.cash-summary .cash-card {
+  padding: 23px;
+}
+
+.cash-card p {
+  color: #8998aa;
+  margin: 0 0 10px;
+}
+
+.cash-card > strong {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 7px;
+}
+
+.cash-card > span {
+  color: #718094;
+  font-size: 13px;
+}
+
+.net-card {
+  border-color: #315441;
+}
+
+.net-card > strong {
+  color: #66c89b;
+}
+
+
+/* GRID */
+
+.cashflow-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.chart-card,
+.health-card {
+  padding: 30px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  margin: 5px 0 0;
+}
+
+.section-heading > span {
+  color: #718094;
+  font-size: 13px;
+}
+
+
+/* CHART */
+
+.flow-chart {
+  height: 260px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 20px 10px 0;
+  border-bottom: 1px solid #1d2c40;
+}
+
+.chart-column {
+  height: 100%;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.bars {
+  height: 220px;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.flow-bar {
+  width: 22px;
+  min-height: 3px;
+  border-radius: 5px 5px 0 0;
+}
+
+.inflow {
+  background: #d4af37;
+}
+
+.outflow {
+  background: #496174;
+}
+
+.chart-column > span {
+  color: #718094;
+  font-size: 12px;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 18px;
+  color: #8998aa;
+  font-size: 13px;
+}
+
+.chart-legend div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.inflow-dot {
+  background: #d4af37;
+}
+
+.outflow-dot {
+  background: #496174;
+}
+
+
+/* HEALTH */
+
+.health-score {
+  margin: 35px 0 15px;
+}
+
+.health-score strong {
+  font-size: 58px;
+  color: #d4af37;
+}
+
+.health-score span {
+  color: #718094;
+}
+
+.health-progress {
+  height: 8px;
+  background: #1b2939;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.health-progress div {
+  width: 78%;
+  height: 100%;
+  background: #d4af37;
+}
+
+.health-status {
+  color: #66c89b !important;
+  font-weight: 600;
+  margin-top: 20px !important;
+}
+
+.health-description {
+  line-height: 1.6;
+}
+
+
+/* RECEIVABLES */
+
+.receivables-section {
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.receivables-table {
+  width: 100%;
+}
+
+.receivables-header,
+.receivable-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 15px;
+  align-items: center;
+}
+
+.receivables-header {
+  padding: 12px 15px;
+  color: #718094;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.receivable-row {
+  padding: 18px 15px;
+  border-top: 1px solid #1d2c40;
+  color: #aeb9c7;
+}
+
+.receivable-row strong {
+  color: #f4f7fb;
+}
+
+.expected-status {
+  color: #66c89b;
+}
+
+.risk-status {
+  color: #d4af37;
+}
+
+
+/* ALERT */
+
+.cash-alert {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 25px;
+
+  background: #0d1a2b;
+  border: 1px solid #5b4b22;
+  border-radius: 14px;
+}
+
+.alert-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #342d1d;
+  color: #d4af37;
+  font-weight: 700;
+}
+
+.cash-alert h2 {
+  margin: 5px 0;
+}
+
+.cash-alert p {
+  color: #8998aa;
+  line-height: 1.5;
+  margin: 5px 0 0;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .cashflow-page {
+    padding: 20px;
+  }
+
+  .cash-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cashflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .receivables-section {
+    overflow-x: auto;
+  }
+
+  .receivables-table {
+    min-width: 650px;
+  }
+
+  .cash-alert {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 550px) {
+
+  .cash-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .cashflow-header {
+    flex-direction: column;
+  }
+
+  .cash-health {
+    text-align: left;
+  }
+}

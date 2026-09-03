@@ -1,0 +1,290 @@
+.verification-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #07111f;
+  color: #f4f7fb;
+}
+
+.verification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.verification-header h1 {
+  margin: 6px 0 10px;
+  font-size: 34px;
+}
+
+.verification-header p {
+  color: #9ba9ba;
+}
+
+.eyebrow,
+.section-label {
+  color: #d4af37 !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.verification-status {
+  text-align: right;
+  color: #7f8da0;
+  font-size: 13px;
+}
+
+.verification-status strong {
+  display: block;
+  color: #d4af37;
+  margin-top: 5px;
+}
+
+
+/* CARDS */
+
+.verification-card {
+  background: #0d1a2b;
+  border: 1px solid #1d2c40;
+  border-radius: 14px;
+}
+
+
+/* OVERVIEW */
+
+.verification-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.identity-card,
+.progress-card {
+  padding: 30px;
+}
+
+.identity-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.identity-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #16263a;
+  border: 1px solid #d4af37;
+
+  color: #d4af37;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.identity-card h2 {
+  margin: 5px 0;
+}
+
+.identity-card span {
+  color: #718094;
+  font-size: 13px;
+}
+
+.progress-number {
+  margin: 20px 0 12px;
+}
+
+.progress-number strong {
+  font-size: 42px;
+  color: #d4af37;
+}
+
+.progress-number span {
+  color: #718094;
+  margin-left: 8px;
+}
+
+.verification-progress,
+.confidence-bar {
+  height: 8px;
+  border-radius: 10px;
+  background: #1b2939;
+  overflow: hidden;
+}
+
+.verification-progress div {
+  width: 50%;
+  height: 100%;
+  background: #d4af37;
+}
+
+.progress-card > p:last-child {
+  color: #8998aa;
+  line-height: 1.5;
+}
+
+
+/* CHECKS */
+
+.checks-section {
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.section-heading {
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  margin: 5px 0 0;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px solid #1d2c40;
+}
+
+.check-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #17372d;
+  color: #66c89b;
+  font-weight: 700;
+}
+
+.check-information {
+  flex: 1;
+}
+
+.check-information strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.check-information p {
+  margin: 0;
+  color: #8998aa;
+  font-size: 14px;
+}
+
+.verified,
+.pending {
+  padding: 7px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+.verified {
+  background: #17372d;
+  color: #66c89b;
+}
+
+.pending {
+  background: #342d1d;
+  color: #d4af37;
+}
+
+
+/* BOTTOM */
+
+.verification-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.verification-grid .verification-card {
+  padding: 30px;
+}
+
+.confidence-score {
+  margin: 20px 0 12px;
+}
+
+.confidence-score strong {
+  font-size: 52px;
+  color: #d4af37;
+}
+
+.confidence-score span {
+  color: #718094;
+}
+
+.confidence-bar div {
+  width: 72%;
+  height: 100%;
+  background: #d4af37;
+}
+
+.description {
+  color: #8998aa;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+.next-step-card p:not(.section-label) {
+  color: #8998aa;
+  line-height: 1.6;
+}
+
+.next-step-card button {
+  margin-top: 15px;
+  padding: 11px 18px;
+
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #d4af37;
+
+  cursor: pointer;
+}
+
+.next-step-card button:hover {
+  background: #d4af37;
+  color: #07111f;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+
+  .verification-page {
+    padding: 20px;
+  }
+
+  .verification-header {
+    flex-direction: column;
+  }
+
+  .verification-status {
+    text-align: left;
+  }
+
+  .verification-overview,
+  .verification-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .check-row {
+    align-items: flex-start;
+  }
+}
