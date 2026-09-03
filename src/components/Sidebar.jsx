@@ -33,18 +33,20 @@ function Sidebar() {
           Add Transaction
         </NavLink>
 
-        <p className="nav-section">TRUST INTELLIGENCE</p>
-        
+        <p className="nav-section">
+          TRUST INTELLIGENCE
+        </p>
+
         <NavLink
           to="/ask-credi"
           className={({ isActive }) =>
-          isActive ? 'nav-item active' : 'nav-item'
-       }
-      >
-        <span>✦</span>
-        Ask Credi
-      </NavLink>
-      
+            isActive ? 'nav-item active' : 'nav-item'
+          }
+        >
+          <span>✦</span>
+          Ask Credi
+        </NavLink>
+
         <NavLink
           to="/trust-passport"
           className={({ isActive }) =>
@@ -85,7 +87,9 @@ function Sidebar() {
           Cash Flow Watch
         </NavLink>
 
-        <p className="nav-section">VERIFICATION</p>
+        <p className="nav-section">
+          VERIFICATION
+        </p>
 
         <NavLink
           to="/verification"
@@ -106,13 +110,14 @@ function Sidebar() {
           <span>▣</span>
           Lender View
         </NavLink>
-        
 
       </nav>
 
       <div className="sidebar-footer">
         <span>Credi</span>
-        <small>Trust infrastructure for businesses</small>
+        <small>
+          Trust infrastructure for businesses
+        </small>
       </div>
 
     </aside>

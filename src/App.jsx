@@ -9,14 +9,14 @@ import ExposureReview from './pages/ExposureReview'
 import CounterpartyProfile from './pages/CounterpartyProfile'
 import TransactionForm from './pages/TransactionForm'
 import AskCredi from './pages/AskCredi'
+import LenderView from './pages/LenderView'
 
 function App() {
   return (
     <BrowserRouter>
-
       <Routes>
 
-        {/* All pages inside this layout will have the sidebar */}
+        {/* All application pages use the main layout and sidebar */}
         <Route element={<AppLayout />}>
 
           <Route
@@ -48,29 +48,32 @@ function App() {
             path="/counterparty-profile"
             element={<CounterpartyProfile />}
           />
+
           <Route
             path="/ask-credi"
             element={<AskCredi />}
           />
 
+          <Route
+            path="/lender"
+            element={<LenderView />}
+          />
+
         </Route>
 
-
-        {/* Home goes to Dashboard */}
+        {/* Opening the app starts on the dashboard */}
         <Route
           path="/"
           element={<Navigate to="/dashboard" replace />}
         />
 
-
-        {/* Unknown pages go to Dashboard */}
+        {/* Any unknown URL goes back to the dashboard */}
         <Route
           path="*"
           element={<Navigate to="/dashboard" replace />}
         />
 
       </Routes>
-
     </BrowserRouter>
   )
 }

@@ -32,7 +32,6 @@ function Dashboard() {
         setBusiness(businessData)
         setTrustScore(scoreData)
         setTransactions(transactionData || [])
-
       } catch (error) {
         console.error('Dashboard loading error:', error)
       } finally {
@@ -43,8 +42,6 @@ function Dashboard() {
     loadDashboard()
   }, [])
 
-
-  // Normalize status so Paid, PAID, paid all work
   const paidTransactions = transactions.filter((transaction) => {
     return (
       transaction.status?.toLowerCase() === 'paid' &&
@@ -53,15 +50,12 @@ function Dashboard() {
     )
   })
 
-
-  // Transactions paid on or before due date
   const onTimeTransactions = paidTransactions.filter((transaction) => {
     const dueDate = new Date(transaction.due_date)
     const paidDate = new Date(transaction.paid_date)
 
     return paidDate <= dueDate
   })
-
 
   const onTimePaymentRate =
     paidTransactions.length > 0
@@ -70,8 +64,6 @@ function Dashboard() {
         )
       : null
 
-
-  // Calculate payment delays
   const paymentDelays = paidTransactions.map((transaction) => {
     const dueDate = new Date(transaction.due_date)
     const paidDate = new Date(transaction.paid_date)
@@ -85,7 +77,6 @@ function Dashboard() {
     )
   })
 
-
   const averagePaymentDelay =
     paymentDelays.length > 0
       ? Math.round(
@@ -96,11 +87,10 @@ function Dashboard() {
         )
       : null
 
-
   return (
     <div className="dashboard">
 
-      {/* HEADER */}
+      {/* Header */}
       <header className="dashboard-header">
 
         <div>
@@ -121,7 +111,7 @@ function Dashboard() {
       </header>
 
 
-      {/* NAVIGATION */}
+      {/* Navigation */}
       <nav className="dashboard-nav">
 
         <Link to="/dashboard" className="nav-link active">
@@ -148,25 +138,30 @@ function Dashboard() {
           Counterparty Profile
         </Link>
 
+        <Link to="/lender" className="nav-link">
+          Lender View
+        </Link>
+
       </nav>
 
 
-      {/* MAIN CONTENT */}
+      {/* Main content */}
       <main className="dashboard-content">
 
         <section className="welcome-section">
+
           <h2>Business Overview</h2>
 
           <p>
             Monitor your business trust, payment behaviour and financial insights.
           </p>
+
         </section>
 
 
-        {/* STATS */}
+        {/* Stats */}
         <section className="stats-grid">
 
-          {/* TRUST SCORE */}
           <div className="stat-card">
 
             <p className="stat-title">
@@ -186,7 +181,6 @@ function Dashboard() {
           </div>
 
 
-          {/* ON-TIME PAYMENT RATE */}
           <div className="stat-card">
 
             <p className="stat-title">
@@ -208,7 +202,6 @@ function Dashboard() {
           </div>
 
 
-          {/* PAYMENT DELAY */}
           <div className="stat-card">
 
             <p className="stat-title">
@@ -232,7 +225,7 @@ function Dashboard() {
         </section>
 
 
-        {/* INSIGHTS */}
+        {/* Insights */}
         <section className="insights-section">
 
           <h2>Credi Insights</h2>
@@ -274,7 +267,7 @@ function Dashboard() {
         </section>
 
 
-        {/* QUICK ACTIONS */}
+        {/* Quick actions */}
         <section className="quick-actions">
 
           <h2>Quick Actions</h2>
@@ -325,6 +318,18 @@ function Dashboard() {
 
               <span>
                 Analyse financial exposure
+              </span>
+            </Link>
+
+
+            <Link
+              to="/lender"
+              className="quick-action-card"
+            >
+              <strong>Lender View</strong>
+
+              <span>
+                View the read-only business assessment for lenders
               </span>
             </Link>
 

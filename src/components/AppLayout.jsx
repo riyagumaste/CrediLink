@@ -5,7 +5,6 @@ import './AppLayout.css'
 function AppLayout() {
   const location = useLocation()
 
-  // Hide the sidebar only on the main dashboard
   const isDashboard = location.pathname === '/dashboard'
 
   return (
@@ -13,7 +12,13 @@ function AppLayout() {
 
       {!isDashboard && <Sidebar />}
 
-      <main className={isDashboard ? 'app-main dashboard-main' : 'app-main'}>
+      <main
+        className={
+          isDashboard
+            ? 'app-main dashboard-main'
+            : 'app-main'
+        }
+      >
         <Outlet />
       </main>
 
