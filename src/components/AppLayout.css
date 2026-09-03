@@ -1,15 +1,25 @@
+/* =========================
+   APP LAYOUT
+========================= */
+
 .app-layout {
   min-height: 100vh;
+
   display: flex;
+
   background: #07111f;
+
   color: #f4f7fb;
 }
 
 
-/* SIDEBAR */
+/* =========================
+   SIDEBAR
+========================= */
 
 .sidebar {
   width: 250px;
+
   min-height: 100vh;
 
   display: flex;
@@ -18,21 +28,26 @@
   box-sizing: border-box;
 
   background: #091625;
+
   border-right: 1px solid #1d2c40;
 
   padding: 28px 18px;
 
   position: fixed;
+
   left: 0;
   top: 0;
   bottom: 0;
 }
 
 
-/* LOGO */
+/* =========================
+   LOGO
+========================= */
 
 .sidebar-logo {
   padding: 0 12px 28px;
+
   border-bottom: 1px solid #1d2c40;
 }
 
@@ -42,6 +57,7 @@
   color: #d4af37;
 
   font-size: 25px;
+
   font-weight: 700;
 }
 
@@ -56,7 +72,9 @@
 }
 
 
-/* NAVIGATION */
+/* =========================
+   NAVIGATION
+========================= */
 
 .sidebar-nav {
   flex: 1;
@@ -70,7 +88,9 @@
   color: #65758a;
 
   font-size: 10px;
+
   font-weight: 700;
+
   letter-spacing: 1.4px;
 }
 
@@ -79,17 +99,23 @@
 }
 
 
-/* NAV ITEM */
+/* =========================
+   NAV ITEM
+========================= */
 
 .nav-item {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 
   margin-bottom: 4px;
+
   padding: 11px 12px;
 
   border: 1px solid transparent;
+
   border-radius: 7px;
 
   color: #9ba9ba;
@@ -97,6 +123,7 @@
   text-decoration: none;
 
   font-size: 13px;
+
   font-weight: 500;
 
   transition:
@@ -109,6 +136,7 @@
   width: 20px;
 
   display: inline-flex;
+
   justify-content: center;
 
   color: #718094;
@@ -118,6 +146,7 @@
 
 .nav-item:hover {
   background: #0d1a2b;
+
   color: #f4f7fb;
 }
 
@@ -126,7 +155,9 @@
 }
 
 
-/* ACTIVE PAGE */
+/* =========================
+   ACTIVE PAGE
+========================= */
 
 .nav-item.active {
   background: #101f32;
@@ -141,7 +172,9 @@
 }
 
 
-/* FOOTER */
+/* =========================
+   SIDEBAR FOOTER
+========================= */
 
 .sidebar-footer {
   padding: 18px 12px 0;
@@ -155,6 +188,7 @@
   color: #d4af37;
 
   font-size: 12px;
+
   font-weight: 700;
 }
 
@@ -166,14 +200,18 @@
   color: #58687b;
 
   font-size: 10px;
+
   line-height: 1.5;
 }
 
 
-/* MAIN CONTENT */
+/* =========================
+   MAIN CONTENT
+========================= */
 
 .app-main {
   width: calc(100% - 250px);
+
   min-height: 100vh;
 
   margin-left: 250px;
@@ -182,7 +220,20 @@
 }
 
 
-/* MOBILE */
+/* =========================
+   DASHBOARD WITHOUT SIDEBAR
+========================= */
+
+.dashboard-main {
+  width: 100%;
+
+  margin-left: 0;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 800px) {
 
@@ -192,6 +243,13 @@
 
   .app-main {
     width: calc(100% - 210px);
+
     margin-left: 210px;
+  }
+
+  .dashboard-main {
+    width: 100%;
+
+    margin-left: 0;
   }
 }
