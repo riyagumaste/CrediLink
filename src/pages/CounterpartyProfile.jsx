@@ -1,51 +1,125 @@
+import { useEffect, useState } from 'react'
 import './CounterpartyProfile.css'
+import { getCounterpartyData } from '../services/counterpartyService'
 
 function CounterpartyProfile() {
-  const counterparty = {
-    name: 'Northstar Supplies Pvt. Ltd.',
-    id: 'CRD-CP-2087',
-    trustScore: 76,
-    paymentRate: 88,
-    averageDelay: 4.2,
-    transactions: 32,
-    completed: 28,
-    delayed: 4,
+  const [counterparties, setCounterparties] = useState([])
+  const [transactions, setTransactions] = useState([])
+  const [selectedCounterparty, setSelectedCounterparty] =
+    useState(null)
+
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCounterpartyData()
+
+        setCounterparties(data.counterparties)
+        setTransactions(data.transactions)
+
+        if (data.counterparties.length > 0) {
+          setSelectedCounterparty(data.counterparties[0])
+        }
+
+      } catch (error) {
+        console.error(
+          'Counterparty loading error:',
+          error
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
+
+  // Transactions belonging to selected counterparty
+
+  const selectedTransactions =
+    selectedCounterparty
+      ? transactions.filter(
+          (transaction) =>
+            transaction.counterparty_id ===
+            selectedCounterparty.id
+        )
+      : []
+
+
+  // Total transaction amount
+
+  const totalAmount =
+    selectedTransactions.reduce(
+      (total, transaction) =>
+        total + Number(transaction.amount || 0),
+      0
+    )
+
+
+  // Paid transactions
+
+  const paidTransactions =
+    selectedTransactions.filter(
+      (transaction) =>
+        transaction.status === 'paid'
+    )
+
+
+  // Outstanding transactions
+
+  const outstandingTransactions =
+    selectedTransactions.filter(
+      (transaction) =>
+        transaction.status !== 'paid'
+    )
+
+
+  const outstandingAmount =
+    outstandingTransactions.reduce(
+      (total, transaction) =>
+        total + Number(transaction.amount || 0),
+      0
+    )
+
+
+  // Payment behaviour
+
+  const completedWithDates =
+    paidTransactions.filter(
+      (transaction) =>
+        transaction.due_date &&
+        transaction.paid_date
+    )
+
+
+  const onTimePayments =
+    completedWithDates.filter(
+      (transaction) =>
+        new Date(transaction.paid_date) <=
+        new Date(transaction.due_date)
+    )
+
+
+  const onTimeRate =
+    completedWithDates.length > 0
+      ? Math.round(
+          (onTimePayments.length /
+            completedWithDates.length) *
+            100
+        )
+      : null
+
+
+  function formatAmount(amount) {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(Number(amount || 0))
   }
 
-  const transactions = [
-    {
-      invoice: 'INV-1048',
-      amount: '₹2,40,000',
-      date: '12 Aug 2026',
-      dueDate: '20 Aug 2026',
-      status: 'Paid',
-      delay: '0 days',
-    },
-    {
-      invoice: 'INV-1039',
-      amount: '₹1,85,000',
-      date: '03 Aug 2026',
-      dueDate: '10 Aug 2026',
-      status: 'Paid',
-      delay: '2 days',
-    },
-    {
-      invoice: 'INV-1027',
-      amount: '₹3,10,000',
-      date: '18 Jul 2026',
-      dueDate: '28 Jul 2026',
-      status: 'Delayed',
-      delay: '9 days',
-    },
-    {
-      invoice: 'INV-1018',
-      amount: '₹1,25,000',
-      date: '05 Jul 2026',
-      dueDate: '15 Jul 2026',
-      status: 'Paid',
-      delay: '1 day',
-    },
-  ]
 
   return (
     <div className="counterparty-page">
@@ -55,253 +129,306 @@ function CounterpartyProfile() {
       <header className="counterparty-header">
 
         <div>
-          <p className="eyebrow">CREDI / COUNTERPARTY INTELLIGENCE</p>
+
+          <p className="eyebrow">
+            CREDI / BUSINESS NETWORK
+          </p>
 
           <h1>Counterparty Profile</h1>
 
           <p>
-            Understand the trustworthiness and payment behaviour
-            of a business you transact with.
+            Analyse businesses you transact with and monitor
+            their payment relationships.
           </p>
-        </div>
 
-        <div className="verified-badge">
-          ✓ Verified
         </div>
 
       </header>
 
 
-      {/* IDENTITY */}
+      {/* COUNTERPARTY SELECTOR */}
 
-      <section className="counterparty-card identity-card">
+      <section className="counterparty-selector">
 
-        <div className="company-avatar">
-          NS
-        </div>
+        <label>Select Counterparty</label>
 
-        <div className="company-info">
-          <p className="section-label">COUNTERPARTY</p>
+        <select
+          value={selectedCounterparty?.id || ''}
+          onChange={(e) => {
 
-          <h2>{counterparty.name}</h2>
+            const selected =
+              counterparties.find(
+                (counterparty) =>
+                  counterparty.id === e.target.value
+              )
 
-          <span>{counterparty.id}</span>
-        </div>
+            setSelectedCounterparty(selected)
 
-        <div className="relationship">
+          }}
+        >
 
-          <span>Your relationship</span>
+          {counterparties.map(
+            (counterparty) => (
 
-          <strong>Active Counterparty</strong>
+              <option
+                key={counterparty.id}
+                value={counterparty.id}
+              >
+                {counterparty.name}
+              </option>
 
-        </div>
+            )
+          )}
+
+        </select>
 
       </section>
 
 
-      {/* SCORE + METRICS */}
+      {/* LOADING */}
 
-      <section className="counterparty-overview">
+      {loading && (
+        <p className="loading-message">
+          Loading counterparties...
+        </p>
+      )}
 
-        <div className="counterparty-card score-card">
 
-          <p className="section-label">COUNTERPARTY TRUST SCORE</p>
+      {/* NO COUNTERPARTIES */}
 
-          <div className="score-display">
-            <strong>{counterparty.trustScore}</strong>
-            <span>/100</span>
-          </div>
+      {!loading && counterparties.length === 0 && (
 
-          <div className="score-status">
-            Moderate Trust
-          </div>
+        <section className="empty-state">
+
+          <h2>No counterparties found</h2>
 
           <p>
-            The score reflects observed payment behaviour,
-            transaction history and reliability.
+            Add counterparties to your business to begin
+            tracking relationships.
           </p>
 
-        </div>
+        </section>
+
+      )}
 
 
-        <div className="counterparty-card metrics-card">
+      {/* PROFILE */}
 
-          <div className="cp-metric">
-            <span>On-Time Payment Rate</span>
-            <strong>{counterparty.paymentRate}%</strong>
-          </div>
+      {!loading && selectedCounterparty && (
 
-          <div className="cp-metric">
-            <span>Average Payment Delay</span>
-            <strong>{counterparty.averageDelay} days</strong>
-          </div>
+        <>
 
-          <div className="cp-metric">
-            <span>Total Transactions</span>
-            <strong>{counterparty.transactions}</strong>
-          </div>
+          {/* BUSINESS INFORMATION */}
 
-          <div className="cp-metric">
-            <span>Completed Successfully</span>
-            <strong>{counterparty.completed}</strong>
-          </div>
+          <section className="counterparty-info">
 
-        </div>
+            <div>
 
-      </section>
+              <p className="section-label">
+                BUSINESS PROFILE
+              </p>
 
+              <h2>
+                {selectedCounterparty.name}
+              </h2>
 
-      {/* TRANSACTION HISTORY */}
+              <p>
+                {selectedCounterparty.industry ||
+                  'Industry information unavailable'}
+              </p>
 
-      <section className="counterparty-card transaction-section">
-
-        <div className="section-heading">
-
-          <div>
-            <p className="section-label">PAYMENT HISTORY</p>
-            <h2>Recent Transactions</h2>
-          </div>
-
-          <span className="transaction-count">
-            {counterparty.transactions} total
-          </span>
-
-        </div>
+            </div>
 
 
-        <div className="transaction-table">
+            <div className="trust-level">
 
-          <div className="table-header">
-            <span>Invoice</span>
-            <span>Amount</span>
-            <span>Due Date</span>
-            <span>Status</span>
-            <span>Delay</span>
-          </div>
+              <span>Trust Level</span>
+
+              <strong>
+                {selectedCounterparty.trust_level ||
+                  'Not Rated'}
+              </strong>
+
+            </div>
+
+          </section>
 
 
-          {transactions.map((transaction) => (
+          {/* CONTACT INFORMATION */}
 
-            <div
-              className="table-row"
-              key={transaction.invoice}
-            >
+          <section className="contact-grid">
 
-              <span className="invoice-number">
-                {transaction.invoice}
-              </span>
+            <div className="contact-card">
+
+              <p>Email</p>
+
+              <strong>
+                {selectedCounterparty.email ||
+                  'Not available'}
+              </strong>
+
+            </div>
+
+
+            <div className="contact-card">
+
+              <p>Phone</p>
+
+              <strong>
+                {selectedCounterparty.phone ||
+                  'Not available'}
+              </strong>
+
+            </div>
+
+
+            <div className="contact-card">
+
+              <p>Business Type</p>
+
+              <strong>
+                {selectedCounterparty.type ||
+                  'Not available'}
+              </strong>
+
+            </div>
+
+          </section>
+
+
+          {/* FINANCIAL STATS */}
+
+          <section className="counterparty-stats">
+
+            <div className="stat-card">
+
+              <p>Total Transaction Value</p>
+
+              <strong>
+                {formatAmount(totalAmount)}
+              </strong>
+
+            </div>
+
+
+            <div className="stat-card">
+
+              <p>Outstanding Exposure</p>
+
+              <strong>
+                {formatAmount(outstandingAmount)}
+              </strong>
+
+            </div>
+
+
+            <div className="stat-card">
+
+              <p>On-Time Payment Rate</p>
+
+              <strong>
+                {onTimeRate === null
+                  ? '--'
+                  : `${onTimeRate}%`}
+              </strong>
+
+            </div>
+
+          </section>
+
+
+          {/* TRANSACTION HISTORY */}
+
+          <section className="transaction-history">
+
+            <div className="section-heading">
+
+              <div>
+
+                <p className="section-label">
+                  RELATIONSHIP HISTORY
+                </p>
+
+                <h2>
+                  Transaction History
+                </h2>
+
+              </div>
 
               <span>
-                {transaction.amount}
+                {selectedTransactions.length}
+                {' '}
+                Transaction
+                {selectedTransactions.length !== 1
+                  ? 's'
+                  : ''}
               </span>
 
-              <span>
-                {transaction.dueDate}
-              </span>
+            </div>
 
-              <span>
-                <strong
-                  className={
-                    transaction.status === 'Paid'
-                      ? 'status-paid'
-                      : 'status-delayed'
-                  }
+
+            {selectedTransactions.length === 0 && (
+
+              <p>
+                No transactions found with this
+                counterparty.
+              </p>
+
+            )}
+
+
+            {selectedTransactions.map(
+              (transaction) => (
+
+                <div
+                  className="transaction-row"
+                  key={transaction.id}
                 >
-                  {transaction.status}
-                </strong>
-              </span>
 
-              <span>
-                {transaction.delay}
-              </span>
+                  <div>
 
-            </div>
+                    <strong>
+                      {transaction.invoice_number ||
+                        'Transaction'}
+                    </strong>
 
-          ))}
+                    <span>
+                      {transaction.description ||
+                        'No description'}
+                    </span>
 
-        </div>
-
-      </section>
-
-
-      {/* RISK INDICATORS */}
-
-      <section className="risk-section">
-
-        <div className="counterparty-card risk-card">
-
-          <p className="section-label">RISK INDICATORS</p>
-
-          <h2>Observed Behaviour</h2>
-
-          <div className="risk-item positive">
-            <span>✓</span>
-            <div>
-              <strong>Consistent transaction activity</strong>
-              <p>
-                The counterparty has maintained regular transaction activity.
-              </p>
-            </div>
-          </div>
-
-          <div className="risk-item positive">
-            <span>✓</span>
-            <div>
-              <strong>88% payments on time</strong>
-              <p>
-                Most recorded payments were completed within the agreed period.
-              </p>
-            </div>
-          </div>
-
-          <div className="risk-item warning">
-            <span>!</span>
-            <div>
-              <strong>Recent payment delays</strong>
-              <p>
-                Several transactions experienced delays beyond the due date.
-              </p>
-            </div>
-          </div>
-
-        </div>
+                  </div>
 
 
-        {/* EXPLAINABILITY */}
+                  <div>
 
-        <div className="counterparty-card explain-card">
+                    <strong>
+                      {formatAmount(transaction.amount)}
+                    </strong>
 
-          <p className="section-label">EXPLAINABILITY</p>
+                    <span>
+                      {transaction.transaction_type}
+                    </span>
 
-          <h2>Why this rating?</h2>
+                  </div>
 
-          <p>
-            Credi combines observable transaction behaviour
-            into an understandable counterparty assessment.
-          </p>
 
-          <div className="rating-breakdown">
+                  <span
+                    className={`status-${transaction.status}`}
+                  >
+                    {transaction.status}
+                  </span>
 
-            <div>
-              <span>Payment reliability</span>
-              <strong>88%</strong>
-            </div>
+                </div>
 
-            <div>
-              <span>Transaction consistency</span>
-              <strong>81%</strong>
-            </div>
+              )
+            )}
 
-            <div>
-              <span>Delay risk</span>
-              <strong>Medium</strong>
-            </div>
+          </section>
 
-          </div>
+        </>
 
-        </div>
-
-      </section>
+      )}
 
     </div>
   )

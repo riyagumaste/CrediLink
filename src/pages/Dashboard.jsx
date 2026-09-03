@@ -1,7 +1,102 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Dashboard.css'
 
+import {
+  getBusinessData,
+  getTrustScore,
+  getTransactions
+} from '../services/dashboardService'
+
 function Dashboard() {
+  const [business, setBusiness] = useState(null)
+  const [trustScore, setTrustScore] = useState(null)
+  const [transactions, setTransactions] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const businessData = await getBusinessData()
+
+        if (!businessData) {
+          console.error('No business found')
+          return
+        }
+
+        const [scoreData, transactionData] = await Promise.all([
+          getTrustScore(businessData.id),
+          getTransactions(businessData.id)
+        ])
+
+        setBusiness(businessData)
+        setTrustScore(scoreData)
+        setTransactions(transactionData || [])
+
+      } catch (error) {
+        console.error('Dashboard loading error:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadDashboard()
+  }, [])
+
+
+  // Normalize status so Paid, PAID, paid all work
+  const paidTransactions = transactions.filter((transaction) => {
+    return (
+      transaction.status?.toLowerCase() === 'paid' &&
+      transaction.due_date &&
+      transaction.paid_date
+    )
+  })
+
+
+  // Transactions paid on or before due date
+  const onTimeTransactions = paidTransactions.filter((transaction) => {
+    const dueDate = new Date(transaction.due_date)
+    const paidDate = new Date(transaction.paid_date)
+
+    return paidDate <= dueDate
+  })
+
+
+  const onTimePaymentRate =
+    paidTransactions.length > 0
+      ? Math.round(
+          (onTimeTransactions.length / paidTransactions.length) * 100
+        )
+      : null
+
+
+  // Calculate payment delays
+  const paymentDelays = paidTransactions.map((transaction) => {
+    const dueDate = new Date(transaction.due_date)
+    const paidDate = new Date(transaction.paid_date)
+
+    const difference =
+      paidDate.getTime() - dueDate.getTime()
+
+    return Math.max(
+      0,
+      Math.round(difference / (1000 * 60 * 60 * 24))
+    )
+  })
+
+
+  const averagePaymentDelay =
+    paymentDelays.length > 0
+      ? Math.round(
+          paymentDelays.reduce(
+            (total, delay) => total + delay,
+            0
+          ) / paymentDelays.length
+        )
+      : null
+
+
   return (
     <div className="dashboard">
 
@@ -15,7 +110,12 @@ function Dashboard() {
 
         <div className="profile">
           <span>Welcome back</span>
-          <strong>Business User</strong>
+
+          <strong>
+            {loading
+              ? 'Loading...'
+              : business?.business_name || 'Business User'}
+          </strong>
         </div>
 
       </header>
@@ -66,40 +166,67 @@ function Dashboard() {
         {/* STATS */}
         <section className="stats-grid">
 
+          {/* TRUST SCORE */}
           <div className="stat-card">
-            <p className="stat-title">Trust Score</p>
 
-            <h2>--</h2>
+            <p className="stat-title">
+              Trust Score
+            </p>
+
+            <h2>
+              {loading
+                ? '--'
+                : trustScore?.overall_score ?? '--'}
+            </h2>
 
             <span>
               Calculated from business activity
             </span>
+
           </div>
 
 
+          {/* ON-TIME PAYMENT RATE */}
           <div className="stat-card">
+
             <p className="stat-title">
               On-Time Payment Rate
             </p>
 
-            <h2>--%</h2>
+            <h2>
+              {loading
+                ? '--%'
+                : onTimePaymentRate !== null
+                  ? `${onTimePaymentRate}%`
+                  : 'No data'}
+            </h2>
 
             <span>
-              Based on payment history
+              Based on completed payment history
             </span>
+
           </div>
 
 
+          {/* PAYMENT DELAY */}
           <div className="stat-card">
+
             <p className="stat-title">
               Average Payment Delay
             </p>
 
-            <h2>-- Days</h2>
+            <h2>
+              {loading
+                ? '-- Days'
+                : averagePaymentDelay !== null
+                  ? `${averagePaymentDelay} Days`
+                  : 'No data'}
+            </h2>
 
             <span>
               Based on completed transactions
             </span>
+
           </div>
 
         </section>
@@ -111,8 +238,37 @@ function Dashboard() {
           <h2>Credi Insights</h2>
 
           <div className="insight-box">
-            Your business insights will appear here once
-            transaction data is available.
+
+            {loading && (
+              'Loading business insights...'
+            )}
+
+            {!loading && transactions.length === 0 && (
+              'No transaction data is currently available.'
+            )}
+
+            {!loading && transactions.length > 0 && (
+              <>
+                Your business currently has{' '}
+                <strong>{transactions.length}</strong>{' '}
+                recorded transaction(s).
+
+                {trustScore?.overall_score && (
+                  <>
+                    {' '}Your current trust score is{' '}
+                    <strong>{trustScore.overall_score}</strong>.
+                  </>
+                )}
+
+                {onTimePaymentRate !== null && (
+                  <>
+                    {' '}Your on-time payment rate is{' '}
+                    <strong>{onTimePaymentRate}%</strong>.
+                  </>
+                )}
+              </>
+            )}
+
           </div>
 
         </section>

@@ -1,212 +1,435 @@
+import { useEffect, useState } from 'react'
 import './TrustPassport.css'
+import { getTrustPassportData } from '../services/trustService'
 
 function TrustPassport() {
-  const business = {
-    name: 'Apex Manufacturing Pvt. Ltd.',
-    id: 'CRD-BUS-1042',
-    trustScore: 82,
-    paymentRate: 94,
-    averageDelay: 2.4,
-    transactions: 47,
+  const [business, setBusiness] = useState(null)
+  const [trustScore, setTrustScore] = useState(null)
+  const [verifications, setVerifications] = useState([])
+  const [documents, setDocuments] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadTrustPassport() {
+      try {
+        const data = await getTrustPassportData()
+
+        setBusiness(data.business)
+        setTrustScore(data.trustScore)
+        setVerifications(data.verifications)
+        setDocuments(data.documents)
+
+      } catch (error) {
+        console.error('Trust Passport loading error:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTrustPassport()
+  }, [])
+
+
+  function formatDate(date) {
+    if (!date) return 'Not available'
+
+    return new Date(date).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
   }
 
-  const trustFactors = [
-    {
-      name: 'Payment Reliability',
-      value: 94,
-      description: 'Most invoices are paid on time.',
-    },
-    {
-      name: 'Transaction Consistency',
-      value: 82,
-      description: 'Transaction behaviour remains relatively stable.',
-    },
-    {
-      name: 'Counterparty Reliability',
-      value: 89,
-      description: 'Most counterparties have completed transactions successfully.',
-    },
-    {
-      name: 'Financial Stability',
-      value: 73,
-      description: 'Some variation has been observed in recent activity.',
-    },
-  ]
+
+  const verifiedRecords = verifications.filter(
+    (record) => record.status === 'verified'
+  )
+
+  const pendingRecords = verifications.filter(
+    (record) => record.status !== 'verified'
+  )
+
 
   return (
-    <div className="trust-passport">
+    <div className="trust-passport-page">
 
-      <header className="trust-header">
+      {/* HEADER */}
+
+      <header className="trust-passport-header">
+
         <div>
-          <p className="eyebrow">CREDI / TRUST INTELLIGENCE</p>
-          <h1>Financial Trust Passport</h1>
-          <p>
-            A transparent overview of this business's financial trust behaviour.
+
+          <p className="eyebrow">
+            CREDI / BUSINESS TRUST PROFILE
           </p>
+
+          <h1>Trust Passport</h1>
+
+          <p>
+            A consolidated view of your business credibility,
+            verification and trust performance.
+          </p>
+
         </div>
 
-        <div className="verification-badge">
-          ✓ Verified Business
-        </div>
       </header>
 
 
-      {/* BUSINESS INFORMATION */}
-
-      <section className="business-card">
-
-        <div>
-          <p className="section-label">BUSINESS</p>
-          <h2>{business.name}</h2>
-          <p className="business-id">{business.id}</p>
-        </div>
-
-        <div className="business-status">
-          <span>Verification</span>
-          <strong>Verified</strong>
-        </div>
-
-      </section>
+      {loading && (
+        <p className="loading-message">
+          Loading your Trust Passport...
+        </p>
+      )}
 
 
-      {/* TRUST SCORE */}
+      {!loading && business && (
 
-      <section className="trust-overview">
+        <>
 
-        <div className="trust-score-card">
+          {/* BUSINESS PROFILE */}
 
-          <p className="section-label">OVERALL TRUST SCORE</p>
+          <section className="passport-business-card">
 
-          <div className="score-circle">
-            <span>{business.trustScore}</span>
-            <small>/100</small>
-          </div>
+            <div>
 
-          <h3>Strong Trust Profile</h3>
+              <p className="section-label">
+                VERIFIED BUSINESS
+              </p>
 
-          <p>
-            Based on payment behaviour, transaction consistency,
-            counterparty reliability and financial activity.
-          </p>
+              <h2>
+                {business.business_name}
+              </h2>
 
-        </div>
+              <p>
+                {business.industry || 'Industry not available'}
+              </p>
 
-
-        <div className="metrics-card">
-
-          <div className="metric">
-            <span>On-Time Payment Rate</span>
-            <strong>{business.paymentRate}%</strong>
-          </div>
-
-          <div className="metric">
-            <span>Average Payment Delay</span>
-            <strong>{business.averageDelay} days</strong>
-          </div>
-
-          <div className="metric">
-            <span>Transactions Analyzed</span>
-            <strong>{business.transactions}</strong>
-          </div>
-
-        </div>
-
-      </section>
+            </div>
 
 
-      {/* TRUST FACTORS */}
+            <div className="passport-risk">
 
-      <section className="trust-factors">
+              <span>Risk Level</span>
 
-        <div className="section-heading">
-          <div>
-            <p className="section-label">TRUST ANALYSIS</p>
-            <h2>Trust Factors</h2>
-          </div>
-        </div>
+              <strong>
+                {trustScore?.risk_level || 'Not Rated'}
+              </strong>
+
+            </div>
+
+          </section>
 
 
-        <div className="factor-grid">
+          {/* OVERALL TRUST SCORE */}
 
-          {trustFactors.map((factor) => (
+          <section className="trust-score-section">
 
-            <div className="factor-card" key={factor.name}>
+            <div className="overall-score">
 
-              <div className="factor-top">
+              <p className="section-label">
+                OVERALL TRUST SCORE
+              </p>
 
-                <div>
-                  <h3>{factor.name}</h3>
-                  <p>{factor.description}</p>
-                </div>
+              <div className="score-display">
 
-                <strong>{factor.value}%</strong>
+                <strong>
+                  {trustScore?.overall_score ?? '--'}
+                </strong>
+
+                <span>/100</span>
 
               </div>
 
-              <div className="progress-track">
-                <div
-                  className="progress-fill"
-                  style={{ width: `${factor.value}%` }}
-                />
+              <p>
+                Calculated from payment behaviour,
+                verification and transaction activity.
+              </p>
+
+            </div>
+
+
+            {/* SCORE BREAKDOWN */}
+
+            <div className="score-breakdown">
+
+              <div className="score-item">
+
+                <span>Payment Score</span>
+
+                <strong>
+                  {trustScore?.payment_score ?? '--'}
+                </strong>
+
+              </div>
+
+
+              <div className="score-item">
+
+                <span>Verification Score</span>
+
+                <strong>
+                  {trustScore?.verification_score ?? '--'}
+                </strong>
+
+              </div>
+
+
+              <div className="score-item">
+
+                <span>Transaction Score</span>
+
+                <strong>
+                  {trustScore?.transaction_score ?? '--'}
+                </strong>
+
               </div>
 
             </div>
 
-          ))}
-
-        </div>
-
-      </section>
+          </section>
 
 
-      {/* EXPLAINABILITY */}
+          {/* BUSINESS INFORMATION */}
 
-      <section className="explainability">
+          <section className="business-details">
 
-        <div>
-          <p className="section-label">EXPLAINABILITY</p>
-          <h2>Why this score?</h2>
-          <p className="explain-description">
-            Credi makes the factors behind the trust score visible
-            instead of presenting a black-box number.
-          </p>
-        </div>
-
-
-        <div className="evidence-list">
-
-          <div className="evidence positive">
-            <span>✓</span>
-            <p>
-              <strong>94% of payments</strong> were completed on time.
+            <p className="section-label">
+              BUSINESS INFORMATION
             </p>
-          </div>
 
-          <div className="evidence positive">
-            <span>✓</span>
-            <p>
-              Average payment delay is only <strong>2.4 days</strong>.
+            <h2>Business Details</h2>
+
+            <div className="details-grid">
+
+              <div>
+                <span>Industry</span>
+
+                <strong>
+                  {business.industry || 'Not available'}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>Registration Number</span>
+
+                <strong>
+                  {business.registration_number ||
+                    'Not available'}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>Founded</span>
+
+                <strong>
+                  {business.founded_year ||
+                    'Not available'}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>Location</span>
+
+                <strong>
+                  {[business.city, business.country]
+                    .filter(Boolean)
+                    .join(', ') || 'Not available'}
+                </strong>
+              </div>
+
+            </div>
+
+          </section>
+
+
+          {/* VERIFICATION */}
+
+          <section className="verification-section">
+
+            <div className="section-heading">
+
+              <div>
+
+                <p className="section-label">
+                  BUSINESS VERIFICATION
+                </p>
+
+                <h2>Verification Records</h2>
+
+              </div>
+
+              <span>
+                {verifiedRecords.length} Verified
+              </span>
+
+            </div>
+
+
+            {verifications.length === 0 && (
+
+              <p>
+                No verification records are available yet.
+              </p>
+
+            )}
+
+
+            {verifications.map((record) => (
+
+              <div
+                className="verification-row"
+                key={record.id}
+              >
+
+                <div>
+
+                  <strong>
+                    {record.verification_type}
+                  </strong>
+
+                  <span>
+                    {record.remarks ||
+                      'No additional remarks'}
+                  </span>
+
+                </div>
+
+
+                <div>
+
+                  <span>Score</span>
+
+                  <strong>
+                    {record.verification_score ?? '--'}
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    {record.status}
+                  </span>
+
+                  <small>
+                    {formatDate(record.verified_at)}
+                  </small>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </section>
+
+
+          {/* DOCUMENTS */}
+
+          <section className="documents-section">
+
+            <div className="section-heading">
+
+              <div>
+
+                <p className="section-label">
+                  BUSINESS DOCUMENTS
+                </p>
+
+                <h2>Document Records</h2>
+
+              </div>
+
+              <span>
+                {documents.length} Documents
+              </span>
+
+            </div>
+
+
+            {documents.length === 0 && (
+
+              <p>
+                No documents have been uploaded yet.
+              </p>
+
+            )}
+
+
+            {documents.map((document) => (
+
+              <div
+                className="document-row"
+                key={document.id}
+              >
+
+                <div>
+
+                  <strong>
+                    {document.document_name}
+                  </strong>
+
+                  <span>
+                    {document.document_type}
+                  </span>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    {document.status || 'Unknown'}
+                  </span>
+
+                  <small>
+                    Uploaded{' '}
+                    {formatDate(document.uploaded_at)}
+                  </small>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </section>
+
+
+          {/* TRUST STATUS */}
+
+          <section className="trust-summary">
+
+            <p className="section-label">
+              TRUST SUMMARY
             </p>
-          </div>
 
-          <div className="evidence positive">
-            <span>✓</span>
+            <h2>
+              {trustScore?.risk_level
+                ? `${trustScore.risk_level} Risk Profile`
+                : 'Trust Profile'}
+            </h2>
+
             <p>
-              <strong>41 of 47 transactions</strong> were completed without
-              major issues.
+              Your Trust Passport combines your verification
+              records, transaction activity and payment behaviour
+              into a consolidated business trust profile.
             </p>
-          </div>
 
-          <div className="evidence warning">
-            <span>!</span>
             <p>
-              <strong>3 transactions</strong> showed significant payment delays.
+              {pendingRecords.length > 0 &&
+                `${pendingRecords.length} verification record(s) may still require attention.`}
             </p>
-          </div>
 
-        </div>
+          </section>
 
-      </section>
+        </>
+
+      )}
 
     </div>
   )
