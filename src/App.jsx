@@ -8,6 +8,7 @@ import TrustPassport from './pages/TrustPassport'
 import ExposureReview from './pages/ExposureReview'
 import CounterpartyProfile from './pages/CounterpartyProfile'
 import TransactionForm from './pages/TransactionForm'
+import AskCredi from './pages/AskCredi'
 
 function App() {
   return (
@@ -46,6 +47,10 @@ function App() {
           <Route
             path="/counterparty-profile"
             element={<CounterpartyProfile />}
+          />
+          <Route
+            path="/ask-credi"
+            element={<AskCredi />}
           />
 
         </Route>

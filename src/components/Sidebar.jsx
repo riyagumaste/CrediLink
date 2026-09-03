@@ -34,7 +34,17 @@ function Sidebar() {
         </NavLink>
 
         <p className="nav-section">TRUST INTELLIGENCE</p>
-
+        
+        <NavLink
+          to="/ask-credi"
+          className={({ isActive }) =>
+          isActive ? 'nav-item active' : 'nav-item'
+       }
+      >
+        <span>✦</span>
+        Ask Credi
+      </NavLink>
+      
         <NavLink
           to="/trust-passport"
           className={({ isActive }) =>
@@ -96,6 +106,7 @@ function Sidebar() {
           <span>▣</span>
           Lender View
         </NavLink>
+        
 
       </nav>
 
