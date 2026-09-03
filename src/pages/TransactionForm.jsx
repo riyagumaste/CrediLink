@@ -13,7 +13,7 @@ function TransactionForm() {
   const [formData, setFormData] = useState({
     business_id: '',
     counterparty_id: '',
-    transaction_type: 'outflow',
+    transaction_type: 'payable',
     amount: '',
     currency: 'INR',
     invoice_number: '',
@@ -33,6 +33,8 @@ function TransactionForm() {
 
       if (error) {
         console.error('Business loading error:', error)
+        setMessage('Unable to load businesses.')
+        setMessageType('error')
         return
       }
 
@@ -57,6 +59,7 @@ function TransactionForm() {
 
       if (error) {
         console.error('Counterparty loading error:', error)
+        setCounterparties([])
         return
       }
 
@@ -92,7 +95,7 @@ function TransactionForm() {
     setFormData({
       business_id: '',
       counterparty_id: '',
-      transaction_type: 'outflow',
+      transaction_type: 'payable',
       amount: '',
       currency: 'INR',
       invoice_number: '',
@@ -116,6 +119,30 @@ function TransactionForm() {
     setMessageType('')
 
     try {
+      if (!formData.business_id) {
+        throw new Error('Please select your business.')
+      }
+
+      if (!formData.amount || Number(formData.amount) <= 0) {
+        throw new Error('Please enter a valid amount.')
+      }
+
+      if (
+        formData.issue_date &&
+        formData.due_date &&
+        formData.due_date < formData.issue_date
+      ) {
+        throw new Error('Due date cannot be before the issue date.')
+      }
+
+      if (
+        formData.issue_date &&
+        formData.paid_date &&
+        formData.paid_date < formData.issue_date
+      ) {
+        throw new Error('Paid date cannot be before the issue date.')
+      }
+
       const transactionData = {
         business_id: formData.business_id,
         counterparty_id: formData.counterparty_id || null,
@@ -144,7 +171,7 @@ function TransactionForm() {
       setFormData({
         business_id: '',
         counterparty_id: '',
-        transaction_type: 'outflow',
+        transaction_type: 'payable',
         amount: '',
         currency: 'INR',
         invoice_number: '',
@@ -156,13 +183,11 @@ function TransactionForm() {
       })
 
       setCounterparties([])
-
     } catch (error) {
       console.error('Transaction error:', error)
 
       setMessage(error.message || 'Unable to add transaction.')
       setMessageType('error')
-
     } finally {
       setLoading(false)
     }
@@ -170,10 +195,7 @@ function TransactionForm() {
 
   return (
     <div className="transaction-page">
-
-      {}
       <header className="transaction-header">
-
         <div className="header-content">
           <p className="eyebrow">
             CREDI / TRANSACTION MANAGEMENT
@@ -191,16 +213,10 @@ function TransactionForm() {
           <span>FINANCIAL RECORD</span>
           <strong>Secure Entry</strong>
         </div>
-
       </header>
 
-
-      {/*FORM CARD*/}
       <section className="transaction-card">
-
-        {/* FORM HEADING */}
         <div className="form-heading">
-
           <div>
             <span className="section-label">
               Transaction Details
@@ -212,21 +228,14 @@ function TransactionForm() {
           <span className="required-note">
             * Required fields
           </span>
-
         </div>
 
-
-        {/* FORM */}
         <form
           onSubmit={handleSubmit}
           className="transaction-form"
         >
-
           <div className="form-grid">
-
-            {/* BUSINESS */}
             <div className="form-group">
-
               <label htmlFor="business_id">
                 Your Business
                 <span className="required">*</span>
@@ -254,19 +263,14 @@ function TransactionForm() {
                   ))}
                 </select>
               </div>
-
             </div>
 
-
-            {/* COUNTERPARTY */}
             <div className="form-group">
-
               <label htmlFor="counterparty_id">
                 Counterparty
               </label>
 
               <div className="select-wrapper">
-
                 <select
                   id="counterparty_id"
                   name="counterparty_id"
@@ -289,22 +293,16 @@ function TransactionForm() {
                     </option>
                   ))}
                 </select>
-
               </div>
-
             </div>
 
-
-            {/* TRANSACTION TYPE */}
             <div className="form-group">
-
               <label htmlFor="transaction_type">
                 Transaction Type
                 <span className="required">*</span>
               </label>
 
               <div className="select-wrapper">
-
                 <select
                   id="transaction_type"
                   name="transaction_type"
@@ -312,30 +310,24 @@ function TransactionForm() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="inflow">
-                    Inflow — Money received
+                  <option value="payable">
+                    Payable — Money you owe
                   </option>
 
-                  <option value="outflow">
-                    Outflow — Money spent
+                  <option value="receivable">
+                    Receivable — Money owed to you
                   </option>
                 </select>
-
               </div>
-
             </div>
 
-
-            {/* AMOUNT */}
             <div className="form-group">
-
               <label htmlFor="amount">
                 Amount
                 <span className="required">*</span>
               </label>
 
               <div className="amount-input">
-
                 <span>
                   {formData.currency === 'INR'
                     ? '₹'
@@ -355,21 +347,15 @@ function TransactionForm() {
                   step="0.01"
                   required
                 />
-
               </div>
-
             </div>
 
-
-            {/* CURRENCY */}
             <div className="form-group">
-
               <label htmlFor="currency">
                 Currency
               </label>
 
               <div className="select-wrapper">
-
                 <select
                   id="currency"
                   name="currency"
@@ -388,15 +374,10 @@ function TransactionForm() {
                     EUR — Euro
                   </option>
                 </select>
-
               </div>
-
             </div>
 
-
-            {/* INVOICE */}
             <div className="form-group">
-
               <label htmlFor="invoice_number">
                 Invoice Number
               </label>
@@ -409,13 +390,9 @@ function TransactionForm() {
                 onChange={handleChange}
                 placeholder="e.g. INV-2026-001"
               />
-
             </div>
 
-
-            {/* ISSUE DATE */}
             <div className="form-group">
-
               <label htmlFor="issue_date">
                 Issue Date
               </label>
@@ -427,13 +404,9 @@ function TransactionForm() {
                 value={formData.issue_date}
                 onChange={handleChange}
               />
-
             </div>
 
-
-            {/* DUE DATE */}
             <div className="form-group">
-
               <label htmlFor="due_date">
                 Due Date
               </label>
@@ -446,13 +419,9 @@ function TransactionForm() {
                 min={formData.issue_date || undefined}
                 onChange={handleChange}
               />
-
             </div>
 
-
-            {/* PAID DATE */}
             <div className="form-group">
-
               <label htmlFor="paid_date">
                 Paid Date
               </label>
@@ -465,19 +434,14 @@ function TransactionForm() {
                 min={formData.issue_date || undefined}
                 onChange={handleChange}
               />
-
             </div>
 
-
-            {/* STATUS */}
             <div className="form-group">
-
               <label htmlFor="status">
                 Status
               </label>
 
               <div className="select-wrapper">
-
                 <select
                   id="status"
                   name="status"
@@ -496,15 +460,10 @@ function TransactionForm() {
                     Overdue
                   </option>
                 </select>
-
               </div>
-
             </div>
 
-
-            {/* DESCRIPTION */}
             <div className="form-group full-width">
-
               <label htmlFor="description">
                 Description
               </label>
@@ -521,15 +480,10 @@ function TransactionForm() {
               <span className="field-hint">
                 Optional — add notes, payment details, or context.
               </span>
-
             </div>
-
           </div>
 
-
-          {/* INFORMATION BOX */}
           <div className="transaction-info">
-
             <div className="info-icon">
               i
             </div>
@@ -543,11 +497,8 @@ function TransactionForm() {
                 may be used to generate your financial insights.
               </p>
             </div>
-
           </div>
 
-
-          {/* MESSAGE */}
           {message && (
             <div
               className={`transaction-message ${messageType}`}
@@ -560,10 +511,7 @@ function TransactionForm() {
             </div>
           )}
 
-
-          {/* ACTIONS */}
           <div className="form-actions">
-
             <button
               type="button"
               className="cancel-button"
@@ -587,16 +535,11 @@ function TransactionForm() {
                 'Add Transaction'
               )}
             </button>
-
           </div>
-
         </form>
-
       </section>
-
     </div>
   )
 }
 
 export default TransactionForm
-

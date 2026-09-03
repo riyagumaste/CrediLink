@@ -10,8 +10,7 @@ function CounterpartyProfile() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // LOAD DATA
-
+  // Load the business relationships and their transactions
   useEffect(() => {
     async function loadData() {
       try {
@@ -42,8 +41,7 @@ function CounterpartyProfile() {
     loadData()
   }, [])
 
-  // SELECTED TRANSACTIONS
-
+  // Only show transactions for the selected counterparty
   const selectedTransactions = useMemo(() => {
     if (!selectedCounterparty) {
       return []
@@ -56,10 +54,7 @@ function CounterpartyProfile() {
     )
   }, [transactions, selectedCounterparty])
 
-  // =========================================
-  // FINANCIAL CALCULATIONS
-  // =========================================
-
+  // Calculate total transaction value
   const totalAmount = useMemo(() => {
     return selectedTransactions.reduce(
       (total, transaction) =>
@@ -68,18 +63,23 @@ function CounterpartyProfile() {
     )
   }, [selectedTransactions])
 
+  // Transactions marked as paid
   const paidTransactions = useMemo(() => {
     return selectedTransactions.filter(
-      (transaction) => transaction.status === 'paid'
+      (transaction) =>
+        String(transaction.status || '').toLowerCase() === 'paid'
     )
   }, [selectedTransactions])
 
+  // Transactions that are not paid yet
   const outstandingTransactions = useMemo(() => {
     return selectedTransactions.filter(
-      (transaction) => transaction.status !== 'paid'
+      (transaction) =>
+        String(transaction.status || '').toLowerCase() !== 'paid'
     )
   }, [selectedTransactions])
 
+  // Calculate the amount still outstanding
   const outstandingAmount = useMemo(() => {
     return outstandingTransactions.reduce(
       (total, transaction) =>
@@ -88,10 +88,22 @@ function CounterpartyProfile() {
     )
   }, [outstandingTransactions])
 
-  // =========================================
-  // PAYMENT BEHAVIOUR
-  // =========================================
+  // Payments that can be evaluated
+  const paymentHistory = useMemo(() => {
+    return selectedTransactions.filter((transaction) => {
+      if (!transaction.due_date) {
+        return false
+      }
 
+      const status = String(
+        transaction.status || ''
+      ).toLowerCase()
+
+      return status === 'paid' || status === 'overdue'
+    })
+  }, [selectedTransactions])
+
+  // Paid transactions with both dates available
   const completedWithDates = useMemo(() => {
     return paidTransactions.filter(
       (transaction) =>
@@ -100,6 +112,7 @@ function CounterpartyProfile() {
     )
   }, [paidTransactions])
 
+  // Payments that were actually completed on time
   const onTimePayments = useMemo(() => {
     return completedWithDates.filter(
       (transaction) =>
@@ -108,19 +121,95 @@ function CounterpartyProfile() {
     )
   }, [completedWithDates])
 
-  const onTimeRate =
-    completedWithDates.length > 0
-      ? Math.round(
-          (onTimePayments.length /
-            completedWithDates.length) *
-            100
-        )
-      : null
+  // Calculate the on-time rate using completed and overdue payments
+  const onTimeRate = useMemo(() => {
+    if (paymentHistory.length === 0) {
+      return null
+    }
 
-  // =========================================
-  // HELPERS
-  // =========================================
+    return Math.round(
+      (onTimePayments.length / paymentHistory.length) * 100
+    )
+  }, [paymentHistory, onTimePayments])
 
+  // Calculate how many days late a payment was
+  function getDaysLate(transaction) {
+    if (!transaction.due_date) {
+      return 0
+    }
+
+    const dueDate = new Date(transaction.due_date)
+
+    if (Number.isNaN(dueDate.getTime())) {
+      return 0
+    }
+
+    const status = String(
+      transaction.status || ''
+    ).toLowerCase()
+
+    let comparisonDate = null
+
+    if (status === 'paid' && transaction.paid_date) {
+      comparisonDate = new Date(transaction.paid_date)
+    } else if (status === 'overdue') {
+      comparisonDate = new Date()
+    }
+
+    if (!comparisonDate || Number.isNaN(comparisonDate.getTime())) {
+      return 0
+    }
+
+    const difference =
+      comparisonDate.getTime() - dueDate.getTime()
+
+    if (difference <= 0) {
+      return 0
+    }
+
+    return Math.ceil(
+      difference / (1000 * 60 * 60 * 24)
+    )
+  }
+
+  // Relationship health starts at 100 and gradually falls with late payments
+  const relationshipHealth = useMemo(() => {
+    if (paymentHistory.length === 0) {
+      return null
+    }
+
+    const lateDays = paymentHistory.reduce(
+      (total, transaction) =>
+        total + getDaysLate(transaction),
+      0
+    )
+
+    const deduction = lateDays * 3
+
+    return Math.max(
+      0,
+      Math.min(100, 100 - deduction)
+    )
+  }, [paymentHistory])
+
+  // Show a short description based on the relationship score
+  const relationshipStatus = useMemo(() => {
+    if (relationshipHealth === null) {
+      return 'Not enough data'
+    }
+
+    if (relationshipHealth >= 80) {
+      return 'Healthy relationship'
+    }
+
+    if (relationshipHealth >= 50) {
+      return 'Monitor closely'
+    }
+
+    return 'Needs attention'
+  }, [relationshipHealth])
+
+  // Format currency
   function formatAmount(amount, currency = 'INR') {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -129,6 +218,7 @@ function CounterpartyProfile() {
     }).format(Number(amount || 0))
   }
 
+  // Format dates for display
   function formatDate(date) {
     if (!date) {
       return '—'
@@ -147,6 +237,7 @@ function CounterpartyProfile() {
     })
   }
 
+  // Create initials for the counterparty avatar
   function getInitials(name) {
     if (!name) {
       return '?'
@@ -164,6 +255,7 @@ function CounterpartyProfile() {
     ).toUpperCase()
   }
 
+  // Apply the correct status style
   function getStatusClass(status) {
     const normalizedStatus = (
       status || 'pending'
@@ -180,6 +272,7 @@ function CounterpartyProfile() {
     return 'status-pending'
   }
 
+  // Change the selected counterparty
   function handleCounterpartyChange(e) {
     const selectedId = e.target.value
 
@@ -191,21 +284,11 @@ function CounterpartyProfile() {
     setSelectedCounterparty(selected || null)
   }
 
-  // =========================================
-  // RENDER
-  // =========================================
-
   return (
     <div className="counterparty-page">
 
-      {/* =====================================
-          HEADER
-          ===================================== */}
-
       <header className="counterparty-header">
-
         <div className="header-content">
-
           <p className="eyebrow">
             CREDI / BUSINESS NETWORK
           </p>
@@ -216,20 +299,13 @@ function CounterpartyProfile() {
             Analyse businesses you transact with and
             monitor their payment relationships.
           </p>
-
         </div>
 
         <div className="verified-badge">
           <span className="verified-dot" />
           Relationship Monitor
         </div>
-
       </header>
-
-
-      {/* =====================================
-          LOADING
-          ===================================== */}
 
       {loading && (
         <section className="state-card">
@@ -243,14 +319,8 @@ function CounterpartyProfile() {
         </section>
       )}
 
-
-      {/* =====================================
-          ERROR
-          ===================================== */}
-
       {!loading && error && (
         <section className="state-card error-state">
-
           <div className="state-icon">
             !
           </div>
@@ -258,20 +328,13 @@ function CounterpartyProfile() {
           <h2>Unable to load data</h2>
 
           <p>{error}</p>
-
         </section>
       )}
-
-
-      {/* =====================================
-          EMPTY
-          ===================================== */}
 
       {!loading &&
         !error &&
         counterparties.length === 0 && (
           <section className="state-card">
-
             <div className="state-icon">
               —
             </div>
@@ -282,26 +345,15 @@ function CounterpartyProfile() {
               Add counterparties to your business to begin
               tracking transaction relationships.
             </p>
-
           </section>
         )}
-
-
-      {/* =====================================
-          MAIN CONTENT
-          ===================================== */}
 
       {!loading &&
         !error &&
         selectedCounterparty && (
           <>
 
-            {/* =================================
-                SELECTOR
-                ================================= */}
-
             <section className="selector-card">
-
               <div className="selector-copy">
                 <span className="section-label">
                   COUNTERPARTY
@@ -313,13 +365,11 @@ function CounterpartyProfile() {
               </div>
 
               <div className="counterparty-select-wrapper">
-
                 <select
                   value={selectedCounterparty.id}
                   onChange={handleCounterpartyChange}
                   aria-label="Select counterparty"
                 >
-
                   {counterparties.map(
                     (counterparty) => (
                       <option
@@ -330,20 +380,11 @@ function CounterpartyProfile() {
                       </option>
                     )
                   )}
-
                 </select>
-
               </div>
-
             </section>
 
-
-            {/* =================================
-                BUSINESS PROFILE
-                ================================= */}
-
             <section className="counterparty-card identity-card">
-
               <div className="company-avatar">
                 {getInitials(
                   selectedCounterparty.name
@@ -351,7 +392,6 @@ function CounterpartyProfile() {
               </div>
 
               <div className="company-info">
-
                 <span className="section-label">
                   BUSINESS PROFILE
                 </span>
@@ -364,11 +404,9 @@ function CounterpartyProfile() {
                   {selectedCounterparty.industry ||
                     'Industry information unavailable'}
                 </p>
-
               </div>
 
               <div className="relationship">
-
                 <span>
                   Trust Level
                 </span>
@@ -377,20 +415,12 @@ function CounterpartyProfile() {
                   {selectedCounterparty.trust_level ||
                     'Not Rated'}
                 </strong>
-
               </div>
-
             </section>
-
-
-            {/* =================================
-                CONTACT INFORMATION
-                ================================= */}
 
             <section className="contact-grid">
 
               <div className="counterparty-card contact-card">
-
                 <span className="contact-label">
                   EMAIL
                 </span>
@@ -399,12 +429,9 @@ function CounterpartyProfile() {
                   {selectedCounterparty.email ||
                     'Not available'}
                 </strong>
-
               </div>
 
-
               <div className="counterparty-card contact-card">
-
                 <span className="contact-label">
                   PHONE
                 </span>
@@ -413,12 +440,9 @@ function CounterpartyProfile() {
                   {selectedCounterparty.phone ||
                     'Not available'}
                 </strong>
-
               </div>
 
-
               <div className="counterparty-card contact-card">
-
                 <span className="contact-label">
                   BUSINESS TYPE
                 </span>
@@ -427,20 +451,13 @@ function CounterpartyProfile() {
                   {selectedCounterparty.type ||
                     'Not available'}
                 </strong>
-
               </div>
 
             </section>
 
-
-            {/* =================================
-                FINANCIAL OVERVIEW
-                ================================= */}
-
             <section className="financial-section">
 
               <div className="section-heading">
-
                 <div>
                   <span className="section-label">
                     FINANCIAL OVERVIEW
@@ -450,14 +467,11 @@ function CounterpartyProfile() {
                     Relationship summary
                   </h2>
                 </div>
-
               </div>
-
 
               <div className="counterparty-stats">
 
                 <div className="counterparty-card stat-card">
-
                   <p>Total Transaction Value</p>
 
                   <strong>
@@ -467,12 +481,9 @@ function CounterpartyProfile() {
                   <span>
                     Across all recorded transactions
                   </span>
-
                 </div>
 
-
                 <div className="counterparty-card stat-card">
-
                   <p>Outstanding Exposure</p>
 
                   <strong>
@@ -486,12 +497,9 @@ function CounterpartyProfile() {
                       ? 's'
                       : ''}
                   </span>
-
                 </div>
 
-
                 <div className="counterparty-card stat-card">
-
                   <p>On-Time Payment Rate</p>
 
                   <strong>
@@ -501,26 +509,18 @@ function CounterpartyProfile() {
                   </strong>
 
                   <span>
-                    {completedWithDates.length > 0
-                      ? `${onTimePayments.length} of ${completedWithDates.length} paid on time`
+                    {paymentHistory.length > 0
+                      ? `${onTimePayments.length} of ${paymentHistory.length} payments on time`
                       : 'Insufficient payment history'}
                   </span>
-
                 </div>
 
               </div>
-
             </section>
-
-
-            {/* =================================
-                TRANSACTION HISTORY
-                ================================= */}
 
             <section className="counterparty-card transaction-history">
 
               <div className="section-heading">
-
                 <div>
                   <span className="section-label">
                     RELATIONSHIP HISTORY
@@ -538,54 +538,36 @@ function CounterpartyProfile() {
                     ? 's'
                     : ''}
                 </span>
-
               </div>
 
-
               {selectedTransactions.length === 0 ? (
-
                 <div className="empty-transactions">
-
                   <span>—</span>
 
                   <p>
                     No transactions found with this
                     counterparty.
                   </p>
-
                 </div>
-
               ) : (
-
                 <div className="transaction-table-wrapper">
-
                   <div className="transaction-table">
 
-                    {/* TABLE HEADER */}
-
                     <div className="table-header">
-
                       <span>Invoice</span>
                       <span>Type</span>
                       <span>Amount</span>
                       <span>Due Date</span>
                       <span>Status</span>
-
                     </div>
-
-
-                    {/* TABLE ROWS */}
 
                     {selectedTransactions.map(
                       (transaction) => (
-
                         <div
                           className="table-row"
                           key={transaction.id}
                         >
-
                           <div className="invoice-cell">
-
                             <strong>
                               {transaction.invoice_number ||
                                 'Transaction'}
@@ -595,17 +577,15 @@ function CounterpartyProfile() {
                               {transaction.description ||
                                 'No description'}
                             </span>
-
                           </div>
 
-
                           <span className="transaction-type">
-                            {transaction.transaction_type ===
-                            'inflow'
+                            {String(
+                              transaction.transaction_type || ''
+                            ).toLowerCase() === 'inflow'
                               ? 'Inflow'
                               : 'Outflow'}
                           </span>
-
 
                           <strong className="transaction-amount">
                             {formatAmount(
@@ -614,13 +594,11 @@ function CounterpartyProfile() {
                             )}
                           </strong>
 
-
                           <span className="transaction-date">
                             {formatDate(
                               transaction.due_date
                             )}
                           </span>
-
 
                           <span
                             className={`status-badge ${getStatusClass(
@@ -630,24 +608,15 @@ function CounterpartyProfile() {
                             {transaction.status ||
                               'Pending'}
                           </span>
-
                         </div>
-
                       )
                     )}
 
                   </div>
-
                 </div>
-
               )}
 
             </section>
-
-
-            {/* =================================
-                PAYMENT ANALYSIS
-                ================================= */}
 
             <section className="analysis-grid">
 
@@ -661,17 +630,14 @@ function CounterpartyProfile() {
                   Relationship signals
                 </h2>
 
-
                 <div className="analysis-list">
 
                   <div className="analysis-item">
-
                     <div className="analysis-icon positive">
                       ✓
                     </div>
 
                     <div>
-
                       <strong>
                         {paidTransactions.length}{' '}
                         completed
@@ -680,20 +646,15 @@ function CounterpartyProfile() {
                       <p>
                         Transactions marked as paid.
                       </p>
-
                     </div>
-
                   </div>
 
-
                   <div className="analysis-item">
-
                     <div className="analysis-icon warning">
                       !
                     </div>
 
                     <div>
-
                       <strong>
                         {outstandingTransactions.length}{' '}
                         outstanding
@@ -703,11 +664,8 @@ function CounterpartyProfile() {
                         Transactions still awaiting
                         payment.
                       </p>
-
                     </div>
-
                   </div>
-
 
                   <div className="analysis-item">
 
@@ -726,7 +684,6 @@ function CounterpartyProfile() {
                     </div>
 
                     <div>
-
                       <strong>
                         {onTimeRate === null
                           ? 'Payment history unavailable'
@@ -737,20 +694,15 @@ function CounterpartyProfile() {
 
                       <p>
                         {onTimeRate === null
-                          ? 'More completed transactions with due dates are required.'
+                          ? 'More completed or overdue transactions with due dates are required.'
                           : `${onTimeRate}% of tracked payments were completed on time.`}
                       </p>
-
                     </div>
 
                   </div>
 
                 </div>
-
               </div>
-
-
-              {/* SCORE / SUMMARY */}
 
               <div className="counterparty-card score-card">
 
@@ -759,36 +711,27 @@ function CounterpartyProfile() {
                 </span>
 
                 <div className="score-display">
-
                   <strong>
-                    {onTimeRate === null
+                    {relationshipHealth === null
                       ? '--'
-                      : onTimeRate}
+                      : relationshipHealth}
                   </strong>
 
-                  {onTimeRate !== null && (
+                  {relationshipHealth !== null && (
                     <span>/100</span>
                   )}
-
                 </div>
 
                 <div className="score-status">
-
-                  {onTimeRate === null
-                    ? 'Not enough data'
-                    : onTimeRate >= 80
-                      ? 'Healthy relationship'
-                      : onTimeRate >= 50
-                        ? 'Monitor closely'
-                        : 'Needs attention'}
-
+                  {relationshipStatus}
                 </div>
 
                 <p>
-                  This indicator is based on available
-                  transaction payment history and should
-                  be treated as a relationship signal,
-                  not a formal credit score.
+                  This indicator starts at 100 and gradually
+                  decreases when payments are late. Each day
+                  of lateness reduces the score by 3 points.
+                  It is a relationship signal, not a formal
+                  credit score.
                 </p>
 
               </div>
