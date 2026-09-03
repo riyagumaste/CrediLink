@@ -7,6 +7,8 @@ function TransactionForm() {
   const [counterparties, setCounterparties] = useState([])
 
   const [loading, setLoading] = useState(false)
+  const [businessLoading, setBusinessLoading] = useState(true)
+
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('')
 
@@ -25,49 +27,76 @@ function TransactionForm() {
   })
 
   useEffect(() => {
-    async function loadBusinesses() {
-      const { data, error } = await supabase
+    async function loadBusinessAndCounterparties() {
+      setBusinessLoading(true)
+
+      // Get the businesses using the original working query
+      const { data: businessData, error: businessError } = await supabase
         .from('businesses')
         .select('*')
         .order('business_name')
 
-      if (error) {
-        console.error('Business loading error:', error)
-        setMessage('Unable to load businesses.')
+      if (businessError) {
+        console.error('Business loading error:', businessError)
+        setMessage('Unable to load business.')
         setMessageType('error')
+        setBusinessLoading(false)
         return
       }
 
-      setBusinesses(data || [])
+      setBusinesses(businessData || [])
+
+      // Your database is returning one business.
+      // Use its existing ID directly.
+      if (!businessData || businessData.length === 0) {
+        console.error('No business found.')
+        setMessage('No business found.')
+        setMessageType('error')
+        setBusinessLoading(false)
+        return
+      }
+
+      const demoBusiness = businessData[0]
+
+      console.log('Using business:', demoBusiness)
+
+      // Store the actual businesses.id
+      setFormData((previousData) => ({
+        ...previousData,
+        business_id: demoBusiness.id,
+      }))
+
+      // Load counterparties using businesses.id
+      const { data: counterpartyData, error: counterpartyError } =
+        await supabase
+          .from('counterparties')
+          .select('*')
+          .eq('business_id', demoBusiness.id)
+          .order('name')
+
+      if (counterpartyError) {
+        console.error(
+          'Counterparty loading error:',
+          counterpartyError
+        )
+
+        setMessage('Unable to load counterparties.')
+        setMessageType('error')
+        setCounterparties([])
+      } else {
+        console.log(
+          'Loaded counterparties:',
+          counterpartyData
+        )
+
+        setCounterparties(counterpartyData || [])
+      }
+
+      setBusinessLoading(false)
     }
 
-    loadBusinesses()
+    loadBusinessAndCounterparties()
   }, [])
-
-  useEffect(() => {
-    async function loadCounterparties() {
-      if (!formData.business_id) {
-        setCounterparties([])
-        return
-      }
-
-      const { data, error } = await supabase
-        .from('counterparties')
-        .select('*')
-        .eq('business_id', formData.business_id)
-        .order('name')
-
-      if (error) {
-        console.error('Counterparty loading error:', error)
-        setCounterparties([])
-        return
-      }
-
-      setCounterparties(data || [])
-    }
-
-    loadCounterparties()
-  }, [formData.business_id])
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -82,18 +111,19 @@ function TransactionForm() {
       setMessageType('')
     }
 
-    if (name === 'business_id') {
+    // Clear paid date when payment type is not Paid
+    if (name === 'status' && value !== 'paid') {
       setFormData((previousData) => ({
         ...previousData,
-        business_id: value,
-        counterparty_id: '',
+        status: value,
+        paid_date: '',
       }))
     }
   }
 
   function clearForm() {
-    setFormData({
-      business_id: '',
+    setFormData((previousData) => ({
+      ...previousData,
       counterparty_id: '',
       transaction_type: 'payable',
       amount: '',
@@ -104,9 +134,8 @@ function TransactionForm() {
       paid_date: '',
       status: 'pending',
       description: '',
-    })
+    }))
 
-    setCounterparties([])
     setMessage('')
     setMessageType('')
   }
@@ -120,7 +149,7 @@ function TransactionForm() {
 
     try {
       if (!formData.business_id) {
-        throw new Error('Please select your business.')
+        throw new Error('Business information is not loaded yet.')
       }
 
       if (!formData.amount || Number(formData.amount) <= 0) {
@@ -168,8 +197,8 @@ function TransactionForm() {
       setMessage('Transaction added successfully.')
       setMessageType('success')
 
-      setFormData({
-        business_id: '',
+      setFormData((previousData) => ({
+        ...previousData,
         counterparty_id: '',
         transaction_type: 'payable',
         amount: '',
@@ -180,9 +209,7 @@ function TransactionForm() {
         paid_date: '',
         status: 'pending',
         description: '',
-      })
-
-      setCounterparties([])
+      }))
     } catch (error) {
       console.error('Transaction error:', error)
 
@@ -195,8 +222,11 @@ function TransactionForm() {
 
   return (
     <div className="transaction-page">
+
       <header className="transaction-header">
+
         <div className="header-content">
+
           <p className="eyebrow">
             CREDI / TRANSACTION MANAGEMENT
           </p>
@@ -207,81 +237,84 @@ function TransactionForm() {
             Record a business transaction to keep your financial
             records and insights up to date.
           </p>
+
         </div>
 
         <div className="transaction-badge">
           <span>FINANCIAL RECORD</span>
           <strong>Secure Entry</strong>
         </div>
+
       </header>
 
       <section className="transaction-card">
+
         <div className="form-heading">
+
           <div>
+
             <span className="section-label">
               Transaction Details
             </span>
 
             <h2>Enter transaction information</h2>
+
           </div>
 
           <span className="required-note">
             * Required fields
           </span>
+
         </div>
 
         <form
           onSubmit={handleSubmit}
           className="transaction-form"
         >
+
           <div className="form-grid">
+
+            {/* BUSINESS */}
             <div className="form-group">
-              <label htmlFor="business_id">
+
+              <label htmlFor="business_display">
                 Your Business
                 <span className="required">*</span>
               </label>
 
-              <div className="select-wrapper">
-                <select
-                  id="business_id"
-                  name="business_id"
-                  value={formData.business_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">
-                    Select business
-                  </option>
+              <input
+                id="business_display"
+                type="text"
+                value="Credi Demo Enterprise"
+                readOnly
+                className="fixed-business"
+              />
 
-                  {businesses.map((business) => (
-                    <option
-                      key={business.id}
-                      value={business.id}
-                    >
-                      {business.business_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
+            {/* COUNTERPARTY */}
             <div className="form-group">
+
               <label htmlFor="counterparty_id">
                 Counterparty
               </label>
 
               <div className="select-wrapper">
+
                 <select
                   id="counterparty_id"
                   name="counterparty_id"
                   value={formData.counterparty_id}
                   onChange={handleChange}
-                  disabled={!formData.business_id}
+                  disabled={businessLoading}
                 >
+
                   <option value="">
-                    {formData.business_id
-                      ? 'Select counterparty'
-                      : 'Select a business first'}
+                    {businessLoading
+                      ? 'Loading...'
+                      : counterparties.length > 0
+                        ? 'Select counterparty'
+                        : 'No counterparties available'}
                   </option>
 
                   {counterparties.map((counterparty) => (
@@ -292,17 +325,23 @@ function TransactionForm() {
                       {counterparty.name}
                     </option>
                   ))}
+
                 </select>
+
               </div>
+
             </div>
 
+            {/* TRANSACTION TYPE */}
             <div className="form-group">
+
               <label htmlFor="transaction_type">
                 Transaction Type
                 <span className="required">*</span>
               </label>
 
               <div className="select-wrapper">
+
                 <select
                   id="transaction_type"
                   name="transaction_type"
@@ -310,6 +349,7 @@ function TransactionForm() {
                   onChange={handleChange}
                   required
                 >
+
                   <option value="payable">
                     Payable — Money you owe
                   </option>
@@ -317,17 +357,23 @@ function TransactionForm() {
                   <option value="receivable">
                     Receivable — Money owed to you
                   </option>
+
                 </select>
+
               </div>
+
             </div>
 
+            {/* AMOUNT */}
             <div className="form-group">
+
               <label htmlFor="amount">
                 Amount
                 <span className="required">*</span>
               </label>
 
               <div className="amount-input">
+
                 <span>
                   {formData.currency === 'INR'
                     ? '₹'
@@ -347,21 +393,27 @@ function TransactionForm() {
                   step="0.01"
                   required
                 />
+
               </div>
+
             </div>
 
+            {/* CURRENCY */}
             <div className="form-group">
+
               <label htmlFor="currency">
                 Currency
               </label>
 
               <div className="select-wrapper">
+
                 <select
                   id="currency"
                   name="currency"
                   value={formData.currency}
                   onChange={handleChange}
                 >
+
                   <option value="INR">
                     INR — Indian Rupee
                   </option>
@@ -373,11 +425,16 @@ function TransactionForm() {
                   <option value="EUR">
                     EUR — Euro
                   </option>
+
                 </select>
+
               </div>
+
             </div>
 
+            {/* INVOICE NUMBER */}
             <div className="form-group">
+
               <label htmlFor="invoice_number">
                 Invoice Number
               </label>
@@ -390,9 +447,12 @@ function TransactionForm() {
                 onChange={handleChange}
                 placeholder="e.g. INV-2026-001"
               />
+
             </div>
 
+            {/* ISSUE DATE */}
             <div className="form-group">
+
               <label htmlFor="issue_date">
                 Issue Date
               </label>
@@ -404,9 +464,12 @@ function TransactionForm() {
                 value={formData.issue_date}
                 onChange={handleChange}
               />
+
             </div>
 
+            {/* DUE DATE */}
             <div className="form-group">
+
               <label htmlFor="due_date">
                 Due Date
               </label>
@@ -419,35 +482,25 @@ function TransactionForm() {
                 min={formData.issue_date || undefined}
                 onChange={handleChange}
               />
+
             </div>
 
+            {/* PAYMENT TYPE */}
             <div className="form-group">
-              <label htmlFor="paid_date">
-                Paid Date
-              </label>
 
-              <input
-                id="paid_date"
-                type="date"
-                name="paid_date"
-                value={formData.paid_date}
-                min={formData.issue_date || undefined}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
               <label htmlFor="status">
-                Status
+                Payment Type
               </label>
 
               <div className="select-wrapper">
+
                 <select
                   id="status"
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
                 >
+
                   <option value="pending">
                     Pending
                   </option>
@@ -459,11 +512,36 @@ function TransactionForm() {
                   <option value="overdue">
                     Overdue
                   </option>
+
                 </select>
+
               </div>
+
             </div>
 
+            {/* PAID DATE - ONLY WHEN PAID */}
+            {formData.status === 'paid' && (
+              <div className="form-group">
+
+                <label htmlFor="paid_date">
+                  Paid Date
+                </label>
+
+                <input
+                  id="paid_date"
+                  type="date"
+                  name="paid_date"
+                  value={formData.paid_date}
+                  min={formData.issue_date || undefined}
+                  onChange={handleChange}
+                />
+
+              </div>
+            )}
+
+            {/* DESCRIPTION */}
             <div className="form-group full-width">
+
               <label htmlFor="description">
                 Description
               </label>
@@ -480,15 +558,20 @@ function TransactionForm() {
               <span className="field-hint">
                 Optional — add notes, payment details, or context.
               </span>
+
             </div>
+
           </div>
 
+          {/* INFO */}
           <div className="transaction-info">
+
             <div className="info-icon">
               i
             </div>
 
             <div>
+
               <strong>Transaction records</strong>
 
               <p>
@@ -496,22 +579,31 @@ function TransactionForm() {
                 are accurate before submitting. This information
                 may be used to generate your financial insights.
               </p>
+
             </div>
+
           </div>
 
+          {/* MESSAGE */}
           {message && (
             <div
               className={`transaction-message ${messageType}`}
             >
+
               <span className="message-icon">
                 {messageType === 'success' ? '✓' : '!'}
               </span>
 
-              <span>{message}</span>
+              <span>
+                {message}
+              </span>
+
             </div>
           )}
 
+          {/* ACTIONS */}
           <div className="form-actions">
+
             <button
               type="button"
               className="cancel-button"
@@ -523,9 +615,10 @@ function TransactionForm() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || businessLoading}
               className="submit-button"
             >
+
               {loading ? (
                 <>
                   <span className="button-spinner" />
@@ -534,10 +627,15 @@ function TransactionForm() {
               ) : (
                 'Add Transaction'
               )}
+
             </button>
+
           </div>
+
         </form>
+
       </section>
+
     </div>
   )
 }
