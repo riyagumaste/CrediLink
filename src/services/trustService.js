@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabaseClient'
 
 export async function getTrustPassportData() {
+
   // Get the business
   const { data: business, error: businessError } = await supabase
     .from('businesses')
@@ -10,7 +11,7 @@ export async function getTrustPassportData() {
 
   if (businessError) throw businessError
 
-  // Get latest trust score
+  // Get the latest trust score
   const { data: trustScore, error: trustError } = await supabase
     .from('trust_scores')
     .select('*')
@@ -21,16 +22,9 @@ export async function getTrustPassportData() {
 
   if (trustError) throw trustError
 
-  // Get verification records
-  const { data: verifications, error: verificationError } = await supabase
-    .from('verification_records')
-    .select('*')
-    .eq('business_id', business.id)
-    .order('created_at', { ascending: false })
-
-  if (verificationError) throw verificationError
-
-  // Get documents
+  // Get business documents
+  // Documents are displayed as supporting business information
+  // but are not used as a Trust Score component.
   const { data: documents, error: documentsError } = await supabase
     .from('documents')
     .select('*')
@@ -42,7 +36,6 @@ export async function getTrustPassportData() {
   return {
     business,
     trustScore,
-    verifications: verifications || [],
     documents: documents || [],
   }
 }

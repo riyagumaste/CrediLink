@@ -23,23 +23,29 @@ function LenderView() {
         const businessData = await getBusinessData()
 
         if (!businessData) {
-          throw new Error('Business information could not be found.')
+          throw new Error(
+            'Business information could not be found.'
+          )
         }
 
-        const [scoreData, transactionData] = await Promise.all([
-          getTrustScore(businessData.id),
-          getTransactions(businessData.id)
-        ])
+        const [scoreData, transactionData] =
+          await Promise.all([
+            getTrustScore(businessData.id),
+            getTransactions(businessData.id)
+          ])
 
         setBusiness(businessData)
         setTrustScore(scoreData)
         setTransactions(transactionData || [])
       } catch (error) {
-        console.error('Lender View loading error:', error)
+        console.error(
+          'Lender View loading error:',
+          error
+        )
 
         setError(
           error.message ||
-          'Unable to load lender assessment.'
+            'Unable to load lender assessment.'
         )
       } finally {
         setLoading(false)
@@ -49,12 +55,18 @@ function LenderView() {
     loadLenderView()
   }, [])
 
+
+  /* =========================
+     PAYMENT DATA
+  ========================= */
+
   const paidTransactions = useMemo(() => {
     return transactions.filter(
       (transaction) =>
         transaction.status?.toLowerCase() === 'paid'
     )
   }, [transactions])
+
 
   const completedWithDates = useMemo(() => {
     return paidTransactions.filter(
@@ -64,6 +76,7 @@ function LenderView() {
     )
   }, [paidTransactions])
 
+
   const onTimeTransactions = useMemo(() => {
     return completedWithDates.filter(
       (transaction) =>
@@ -71,6 +84,7 @@ function LenderView() {
         new Date(transaction.due_date)
     )
   }, [completedWithDates])
+
 
   const lateTransactions = useMemo(() => {
     return completedWithDates.filter(
@@ -80,12 +94,14 @@ function LenderView() {
     )
   }, [completedWithDates])
 
+
   const outstandingTransactions = useMemo(() => {
     return transactions.filter(
       (transaction) =>
         transaction.status?.toLowerCase() !== 'paid'
     )
   }, [transactions])
+
 
   const overdueTransactions = useMemo(() => {
     const today = new Date()
@@ -96,34 +112,47 @@ function LenderView() {
           return false
         }
 
-        return new Date(transaction.due_date) < today
+        return (
+          new Date(transaction.due_date) < today
+        )
       }
     )
   }, [outstandingTransactions])
 
+
+  /* =========================
+     FINANCIAL CALCULATIONS
+  ========================= */
+
   const totalTransactionValue = useMemo(() => {
     return transactions.reduce(
       (total, transaction) =>
-        total + Number(transaction.amount || 0),
+        total +
+        Number(transaction.amount || 0),
       0
     )
   }, [transactions])
 
+
   const outstandingExposure = useMemo(() => {
     return outstandingTransactions.reduce(
       (total, transaction) =>
-        total + Number(transaction.amount || 0),
+        total +
+        Number(transaction.amount || 0),
       0
     )
   }, [outstandingTransactions])
 
+
   const overdueExposure = useMemo(() => {
     return overdueTransactions.reduce(
       (total, transaction) =>
-        total + Number(transaction.amount || 0),
+        total +
+        Number(transaction.amount || 0),
       0
     )
   }, [overdueTransactions])
+
 
   const onTimeRate = useMemo(() => {
     if (completedWithDates.length === 0) {
@@ -135,26 +164,36 @@ function LenderView() {
         completedWithDates.length) *
         100
     )
-  }, [completedWithDates, onTimeTransactions])
+  }, [
+    completedWithDates,
+    onTimeTransactions
+  ])
+
 
   const paymentDelays = useMemo(() => {
-    return completedWithDates.map((transaction) => {
-      const dueDate = new Date(transaction.due_date)
-      const paidDate = new Date(transaction.paid_date)
+    return completedWithDates.map(
+      (transaction) => {
+        const dueDate =
+          new Date(transaction.due_date)
 
-      const difference =
-        paidDate.getTime() -
-        dueDate.getTime()
+        const paidDate =
+          new Date(transaction.paid_date)
 
-      return Math.max(
-        0,
-        Math.round(
-          difference /
-            (1000 * 60 * 60 * 24)
+        const difference =
+          paidDate.getTime() -
+          dueDate.getTime()
+
+        return Math.max(
+          0,
+          Math.round(
+            difference /
+              (1000 * 60 * 60 * 24)
+          )
         )
-      )
-    })
+      }
+    )
   }, [completedWithDates])
+
 
   const averagePaymentDelay = useMemo(() => {
     if (paymentDelays.length === 0) {
@@ -163,11 +202,13 @@ function LenderView() {
 
     return Math.round(
       paymentDelays.reduce(
-        (total, delay) => total + delay,
+        (total, delay) =>
+          total + delay,
         0
       ) / paymentDelays.length
     )
   }, [paymentDelays])
+
 
   const worstPaymentDelay = useMemo(() => {
     if (paymentDelays.length === 0) {
@@ -176,6 +217,7 @@ function LenderView() {
 
     return Math.max(...paymentDelays)
   }, [paymentDelays])
+
 
   const activeCounterparties = useMemo(() => {
     const ids = transactions
@@ -187,6 +229,7 @@ function LenderView() {
 
     return new Set(ids).size
   }, [transactions])
+
 
   const outstandingPercentage = useMemo(() => {
     if (totalTransactionValue === 0) {
@@ -203,6 +246,7 @@ function LenderView() {
     totalTransactionValue
   ])
 
+
   const overduePercentage = useMemo(() => {
     if (totalTransactionValue === 0) {
       return 0
@@ -218,23 +262,32 @@ function LenderView() {
     totalTransactionValue
   ])
 
+
+  /* =========================
+     PAYMENT TREND
+  ========================= */
+
   const relationshipTrend = useMemo(() => {
     if (completedWithDates.length < 2) {
       return 'Insufficient data'
     }
 
-    const sorted = [...completedWithDates].sort(
+    const sorted = [
+      ...completedWithDates
+    ].sort(
       (a, b) =>
         new Date(a.due_date) -
         new Date(b.due_date)
     )
 
-    const midpoint = Math.floor(
-      sorted.length / 2
-    )
+    const midpoint =
+      Math.floor(sorted.length / 2)
 
-    const previous = sorted.slice(0, midpoint)
-    const recent = sorted.slice(midpoint)
+    const previous =
+      sorted.slice(0, midpoint)
+
+    const recent =
+      sorted.slice(midpoint)
 
     const calculateRate = (items) => {
       if (!items.length) {
@@ -243,8 +296,12 @@ function LenderView() {
 
       const onTime = items.filter(
         (transaction) =>
-          new Date(transaction.paid_date) <=
-          new Date(transaction.due_date)
+          new Date(
+            transaction.paid_date
+          ) <=
+          new Date(
+            transaction.due_date
+          )
       )
 
       return (
@@ -282,8 +339,26 @@ function LenderView() {
     return 'Stable'
   }, [completedWithDates])
 
+
+  /* =========================
+     TRUST SCORE
+  ========================= */
+
   const trustScoreValue =
     trustScore?.overall_score ?? null
+
+
+  /*
+   * Financial stability is now a real
+   * trust-score component from Supabase.
+   *
+   * verification_score is intentionally
+   * not used anywhere in this component.
+   */
+  const financialStabilityScore =
+    trustScore?.financial_stability_score ??
+    null
+
 
   const trustAssessment = useMemo(() => {
     if (trustScoreValue === null) {
@@ -313,6 +388,11 @@ function LenderView() {
     }
   }, [trustScoreValue])
 
+
+  /* =========================
+     RISK SIGNALS
+  ========================= */
+
   const riskFlags = useMemo(() => {
     const flags = []
 
@@ -323,7 +403,8 @@ function LenderView() {
       flags.push({
         type: 'positive',
         icon: '✓',
-        title: 'Strong repayment history',
+        title:
+          'Strong repayment history',
         description:
           `${onTimeRate}% of tracked completed payments were made on time.`
       })
@@ -333,7 +414,8 @@ function LenderView() {
       flags.push({
         type: 'warning',
         icon: '!',
-        title: 'Payment behaviour requires attention',
+        title:
+          'Payment behaviour requires attention',
         description:
           `${onTimeRate}% of tracked completed payments were made on time.`
       })
@@ -341,7 +423,8 @@ function LenderView() {
       flags.push({
         type: 'neutral',
         icon: '—',
-        title: 'Limited repayment history',
+        title:
+          'Limited repayment history',
         description:
           'There is not enough completed payment data to assess repayment consistency.'
       })
@@ -354,7 +437,8 @@ function LenderView() {
       flags.push({
         type: 'positive',
         icon: '✓',
-        title: 'No overdue exposure detected',
+        title:
+          'No overdue exposure detected',
         description:
           'No currently recorded transaction is past its due date.'
       })
@@ -364,7 +448,8 @@ function LenderView() {
       flags.push({
         type: 'warning',
         icon: '!',
-        title: 'Overdue exposure detected',
+        title:
+          'Overdue exposure detected',
         description:
           `${overdueTransactions.length} transaction(s) are currently past their due date.`
       })
@@ -376,7 +461,8 @@ function LenderView() {
       flags.push({
         type: 'positive',
         icon: '✓',
-        title: 'Established business network',
+        title:
+          'Established business network',
         description:
           `Recorded activity exists across ${activeCounterparties} counterparties.`
       })
@@ -384,10 +470,48 @@ function LenderView() {
       flags.push({
         type: 'neutral',
         icon: '—',
-        title: 'Limited relationship history',
+        title:
+          'Limited relationship history',
         description:
           'The available transaction data contains a relatively small counterparty network.'
       })
+    }
+
+    if (
+      financialStabilityScore !== null
+    ) {
+      if (
+        financialStabilityScore >= 70
+      ) {
+        flags.push({
+          type: 'positive',
+          icon: '✓',
+          title:
+            'Healthy financial stability score',
+          description:
+            `Financial stability is currently scored at ${financialStabilityScore}/100 based on available financial activity.`
+        })
+      } else if (
+        financialStabilityScore >= 50
+      ) {
+        flags.push({
+          type: 'neutral',
+          icon: '—',
+          title:
+            'Moderate financial stability',
+          description:
+            `Financial stability is currently scored at ${financialStabilityScore}/100.`
+        })
+      } else {
+        flags.push({
+          type: 'warning',
+          icon: '!',
+          title:
+            'Financial stability requires attention',
+          description:
+            `Financial stability is currently scored at ${financialStabilityScore}/100 based on available financial activity.`
+        })
+      }
     }
 
     return flags
@@ -395,8 +519,14 @@ function LenderView() {
     onTimeRate,
     overdueTransactions,
     transactions,
-    activeCounterparties
+    activeCounterparties,
+    financialStabilityScore
   ])
+
+
+  /* =========================
+     FORMATTING HELPERS
+  ========================= */
 
   function formatAmount(
     amount,
@@ -410,7 +540,9 @@ function LenderView() {
           currency,
           maximumFractionDigits: 0
         }
-      ).format(Number(amount || 0))
+      ).format(
+        Number(amount || 0)
+      )
     } catch {
       return `₹${Number(
         amount || 0
@@ -418,12 +550,14 @@ function LenderView() {
     }
   }
 
+
   function formatDate(date) {
     if (!date) {
       return '—'
     }
 
-    const parsedDate = new Date(date)
+    const parsedDate =
+      new Date(date)
 
     if (
       Number.isNaN(
@@ -443,7 +577,10 @@ function LenderView() {
     )
   }
 
-  function getPaymentDelay(transaction) {
+
+  function getPaymentDelay(
+    transaction
+  ) {
     if (
       !transaction.due_date ||
       !transaction.paid_date
@@ -468,14 +605,26 @@ function LenderView() {
     )
   }
 
+
+  /* =========================
+     PDF
+  ========================= */
+
   function handleDownloadPdf() {
     window.print()
   }
 
+
+  /* =========================
+     LOADING STATE
+  ========================= */
+
   if (loading) {
     return (
       <div className="lender-view">
+
         <section className="lender-state-card">
+
           <div className="lender-loading-spinner" />
 
           <h2>
@@ -483,18 +632,30 @@ function LenderView() {
           </h2>
 
           <p>
-            Retrieving verified business,
-            transaction and trust information.
+            Retrieving business,
+            transaction and trust
+            information.
           </p>
+
         </section>
+
       </div>
     )
   }
 
+
+  /* =========================
+     ERROR STATE
+  ========================= */
+
   if (error) {
     return (
       <div className="lender-view">
-        <section className="lender-state-card lender-error-state">
+
+        <section
+          className="lender-state-card lender-error-state"
+        >
+
           <div className="lender-state-icon">
             !
           </div>
@@ -503,18 +664,28 @@ function LenderView() {
             Unable to load assessment
           </h2>
 
-          <p>{error}</p>
+          <p>
+            {error}
+          </p>
+
         </section>
+
       </div>
     )
   }
 
+
   return (
     <div className="lender-view">
+
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <header className="lender-header">
 
         <div>
+
           <p className="lender-eyebrow">
             CREDI / LENDER ASSESSMENT
           </p>
@@ -526,7 +697,9 @@ function LenderView() {
           <p>
             Business Trust Intelligence
           </p>
+
         </div>
+
 
         <div className="lender-header-actions">
 
@@ -539,8 +712,13 @@ function LenderView() {
           </button>
 
           <div className="lender-verified">
-            <span>✓</span>
+
+            <span>
+              ✓
+            </span>
+
             Read-only assessment
+
           </div>
 
         </div>
@@ -550,7 +728,10 @@ function LenderView() {
 
       <main className="lender-content">
 
-        {/* Decision summary */}
+
+        {/* =========================
+            BUSINESS SUMMARY
+        ========================= */}
 
         <section className="lender-hero">
 
@@ -579,6 +760,7 @@ function LenderView() {
 
           </div>
 
+
           <div className="lender-hero-score">
 
             <span>
@@ -604,13 +786,16 @@ function LenderView() {
         </section>
 
 
-        {/* Decision snapshot */}
+        {/* =========================
+            LENDER SNAPSHOT
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 LENDER SNAPSHOT
               </p>
@@ -618,6 +803,7 @@ function LenderView() {
               <h2>
                 Decision-relevant indicators
               </h2>
+
             </div>
 
             <span>
@@ -626,52 +812,80 @@ function LenderView() {
 
           </div>
 
+
           <div className="lender-summary-grid">
 
             <div className="lender-summary-card">
-              <span>On-time Payment Rate</span>
+
+              <span>
+                On-time Payment Rate
+              </span>
+
               <strong>
                 {onTimeRate !== null
                   ? `${onTimeRate}%`
                   : '--'}
               </strong>
+
               <small>
                 {completedWithDates.length}{' '}
                 completed payments tracked
               </small>
+
             </div>
 
+
             <div className="lender-summary-card">
-              <span>Outstanding Exposure</span>
+
+              <span>
+                Outstanding Exposure
+              </span>
+
               <strong>
                 {formatAmount(
                   outstandingExposure
                 )}
               </strong>
+
               <small>
                 {outstandingTransactions.length}{' '}
                 outstanding transaction(s)
               </small>
+
             </div>
 
+
             <div className="lender-summary-card">
-              <span>Transaction Activity</span>
+
+              <span>
+                Transaction Activity
+              </span>
+
               <strong>
                 {transactions.length}
               </strong>
+
               <small>
                 Recorded transactions
               </small>
+
             </div>
 
+
             <div className="lender-summary-card">
-              <span>Payment Trend</span>
+
+              <span>
+                Payment Trend
+              </span>
+
               <strong>
                 {relationshipTrend}
               </strong>
+
               <small>
                 Based on available payment history
               </small>
+
             </div>
 
           </div>
@@ -679,13 +893,16 @@ function LenderView() {
         </section>
 
 
-        {/* Financial position */}
+        {/* =========================
+            FINANCIAL POSITION
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 FINANCIAL POSITION
               </p>
@@ -693,13 +910,16 @@ function LenderView() {
               <h2>
                 Transaction and exposure profile
               </h2>
+
             </div>
 
           </div>
 
+
           <div className="lender-financial-grid">
 
             <div className="lender-financial-card">
+
               <span>
                 Total Transaction Value
               </span>
@@ -713,9 +933,12 @@ function LenderView() {
               <small>
                 Across all recorded transactions
               </small>
+
             </div>
 
+
             <div className="lender-financial-card">
+
               <span>
                 Outstanding Exposure
               </span>
@@ -727,11 +950,15 @@ function LenderView() {
               </strong>
 
               <small>
-                {outstandingPercentage}% of recorded value
+                {outstandingPercentage}%
+                of recorded value
               </small>
+
             </div>
 
+
             <div className="lender-financial-card">
+
               <span>
                 Overdue Exposure
               </span>
@@ -743,11 +970,15 @@ function LenderView() {
               </strong>
 
               <small>
-                {overduePercentage}% of recorded value
+                {overduePercentage}%
+                of recorded value
               </small>
+
             </div>
 
+
             <div className="lender-financial-card">
+
               <span>
                 Business Relationships
               </span>
@@ -759,6 +990,7 @@ function LenderView() {
               <small>
                 Active counterparties represented
               </small>
+
             </div>
 
           </div>
@@ -766,13 +998,16 @@ function LenderView() {
         </section>
 
 
-        {/* Trust breakdown */}
+        {/* =========================
+            TRUST BREAKDOWN
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 TRUST INTELLIGENCE
               </p>
@@ -780,6 +1015,7 @@ function LenderView() {
               <h2>
                 Trust Score Breakdown
               </h2>
+
             </div>
 
             <span>
@@ -788,11 +1024,16 @@ function LenderView() {
 
           </div>
 
+
           <div className="lender-breakdown">
+
+
+            {/* Payment Behaviour */}
 
             <div className="lender-breakdown-item">
 
               <div>
+
                 <span>
                   Payment Behaviour
                 </span>
@@ -802,9 +1043,12 @@ function LenderView() {
                     ? onTimeRate
                     : '--'}
                 </strong>
+
               </div>
 
+
               <div className="lender-progress">
+
                 <div
                   style={{
                     width: `${
@@ -812,7 +1056,9 @@ function LenderView() {
                     }%`
                   }}
                 />
+
               </div>
+
 
               <small>
                 Based on completed payments
@@ -821,9 +1067,12 @@ function LenderView() {
             </div>
 
 
+            {/* Financial Activity */}
+
             <div className="lender-breakdown-item">
 
               <div>
+
                 <span>
                   Financial Activity
                 </span>
@@ -840,9 +1089,12 @@ function LenderView() {
                       )
                     : '--'}
                 </strong>
+
               </div>
 
+
               <div className="lender-progress">
+
                 <div
                   style={{
                     width: `${
@@ -859,7 +1111,9 @@ function LenderView() {
                     }%`
                   }}
                 />
+
               </div>
+
 
               <small>
                 Based on recorded transaction activity
@@ -868,9 +1122,12 @@ function LenderView() {
             </div>
 
 
+            {/* Business Relationships */}
+
             <div className="lender-breakdown-item">
 
               <div>
+
                 <span>
                   Business Relationships
                 </span>
@@ -884,9 +1141,12 @@ function LenderView() {
                       )
                     : '--'}
                 </strong>
+
               </div>
 
+
               <div className="lender-progress">
+
                 <div
                   style={{
                     width: `${
@@ -900,7 +1160,9 @@ function LenderView() {
                     }%`
                   }}
                 />
+
               </div>
+
 
               <small>
                 Based on transaction relationships
@@ -909,33 +1171,41 @@ function LenderView() {
             </div>
 
 
+            {/* Financial Stability */}
+
             <div className="lender-breakdown-item">
 
               <div>
+
                 <span>
-                  Verification
+                  Financial Stability
                 </span>
 
                 <strong>
-                  {trustScoreValue !== null
-                    ? 'Available'
+                  {financialStabilityScore !== null
+                    ? financialStabilityScore
                     : '--'}
                 </strong>
+
               </div>
+
 
               <div className="lender-progress">
+
                 <div
                   style={{
-                    width:
-                      trustScoreValue !== null
-                        ? '100%'
-                        : '0%'
+                    width: `${
+                      financialStabilityScore ??
+                      0
+                    }%`
                   }}
                 />
+
               </div>
 
+
               <small>
-                Based on information currently available
+                Based on outstanding and overdue financial exposure
               </small>
 
             </div>
@@ -945,13 +1215,16 @@ function LenderView() {
         </section>
 
 
-        {/* Payment performance */}
+        {/* =========================
+            PAYMENT PERFORMANCE
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 PAYMENT BEHAVIOUR
               </p>
@@ -959,13 +1232,16 @@ function LenderView() {
               <h2>
                 Repayment Performance
               </h2>
+
             </div>
 
           </div>
 
+
           <div className="lender-payment-grid">
 
             <div>
+
               <span>
                 On-time Payments
               </span>
@@ -979,9 +1255,12 @@ function LenderView() {
               <small>
                 Completed on or before due date
               </small>
+
             </div>
 
+
             <div>
+
               <span>
                 Completed
               </span>
@@ -993,9 +1272,12 @@ function LenderView() {
               <small>
                 Transactions marked paid
               </small>
+
             </div>
 
+
             <div>
+
               <span>
                 Late Payments
               </span>
@@ -1007,9 +1289,12 @@ function LenderView() {
               <small>
                 Completed after due date
               </small>
+
             </div>
 
+
             <div>
+
               <span>
                 Average Delay
               </span>
@@ -1023,13 +1308,16 @@ function LenderView() {
               <small>
                 Average delay among tracked payments
               </small>
+
             </div>
 
           </div>
 
+
           <div className="lender-payment-detail">
 
             <div>
+
               <span>
                 Longest recorded payment delay
               </span>
@@ -1039,9 +1327,12 @@ function LenderView() {
                   ? `${worstPaymentDelay} days`
                   : 'No data'}
               </strong>
+
             </div>
 
+
             <div>
+
               <span>
                 Outstanding transactions
               </span>
@@ -1049,9 +1340,12 @@ function LenderView() {
               <strong>
                 {outstandingTransactions.length}
               </strong>
+
             </div>
 
+
             <div>
+
               <span>
                 Overdue transactions
               </span>
@@ -1059,6 +1353,7 @@ function LenderView() {
               <strong>
                 {overdueTransactions.length}
               </strong>
+
             </div>
 
           </div>
@@ -1066,13 +1361,16 @@ function LenderView() {
         </section>
 
 
-        {/* Risk signals */}
+        {/* =========================
+            RISK SIGNALS
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 RISK REVIEW
               </p>
@@ -1080,9 +1378,11 @@ function LenderView() {
               <h2>
                 Key relationship signals
               </h2>
+
             </div>
 
           </div>
+
 
           <div className="lender-risk-list">
 
@@ -1098,7 +1398,9 @@ function LenderView() {
                     {flag.icon}
                   </div>
 
+
                   <div>
+
                     <strong>
                       {flag.title}
                     </strong>
@@ -1106,6 +1408,7 @@ function LenderView() {
                     <p>
                       {flag.description}
                     </p>
+
                   </div>
 
                 </div>
@@ -1118,13 +1421,16 @@ function LenderView() {
         </section>
 
 
-        {/* Transaction evidence */}
+        {/* =========================
+            TRANSACTION EVIDENCE
+        ========================= */}
 
         <section className="lender-section lender-evidence-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
                 TRANSACTION EVIDENCE
               </p>
@@ -1132,6 +1438,7 @@ function LenderView() {
               <h2>
                 Recorded payment history
               </h2>
+
             </div>
 
             <span>
@@ -1139,6 +1446,7 @@ function LenderView() {
             </span>
 
           </div>
+
 
           {transactions.length === 0 ? (
 
@@ -1153,13 +1461,33 @@ function LenderView() {
               <div className="lender-table">
 
                 <div className="lender-table-header">
-                  <span>Invoice</span>
-                  <span>Amount</span>
-                  <span>Due Date</span>
-                  <span>Paid Date</span>
-                  <span>Delay</span>
-                  <span>Status</span>
+
+                  <span>
+                    Invoice
+                  </span>
+
+                  <span>
+                    Amount
+                  </span>
+
+                  <span>
+                    Due Date
+                  </span>
+
+                  <span>
+                    Paid Date
+                  </span>
+
+                  <span>
+                    Delay
+                  </span>
+
+                  <span>
+                    Status
+                  </span>
+
                 </div>
+
 
                 {transactions.map(
                   (transaction) => {
@@ -1170,12 +1498,14 @@ function LenderView() {
                       )
 
                     return (
+
                       <div
                         className="lender-table-row"
                         key={transaction.id}
                       >
 
                         <div>
+
                           <strong>
                             {transaction.invoice_number ||
                               transaction.invoice_no ||
@@ -1186,7 +1516,9 @@ function LenderView() {
                             {transaction.description ||
                               'Recorded business transaction'}
                           </small>
+
                         </div>
+
 
                         <strong>
                           {formatAmount(
@@ -1196,11 +1528,13 @@ function LenderView() {
                           )}
                         </strong>
 
+
                         <span>
                           {formatDate(
                             transaction.due_date
                           )}
                         </span>
+
 
                         <span>
                           {formatDate(
@@ -1208,11 +1542,13 @@ function LenderView() {
                           )}
                         </span>
 
+
                         <span>
                           {delay !== null
                             ? `${delay}d`
                             : '—'}
                         </span>
+
 
                         <span
                           className={`lender-status ${
@@ -1228,6 +1564,7 @@ function LenderView() {
                         </span>
 
                       </div>
+
                     )
                   }
                 )}
@@ -1241,7 +1578,9 @@ function LenderView() {
         </section>
 
 
-        {/* Assessment */}
+        {/* =========================
+            ASSESSMENT
+        ========================= */}
 
         <section className="lender-assessment">
 
@@ -1253,9 +1592,11 @@ function LenderView() {
             Overall Relationship Assessment
           </h2>
 
+
           <div className="lender-assessment-content">
 
             <div className="lender-assessment-score">
+
               <strong>
                 {trustScoreValue ?? '--'}
               </strong>
@@ -1263,7 +1604,9 @@ function LenderView() {
               <span>
                 /100
               </span>
+
             </div>
+
 
             <div>
 
@@ -1271,18 +1614,22 @@ function LenderView() {
                 {trustAssessment.label}
               </strong>
 
-              <p>
-                The assessment reflects the business
-                information, transaction activity and
-                payment behaviour currently available
-                through Credi.
-              </p>
 
               <p>
-                It is intended to support lender due
-                diligence and should be considered
-                alongside the lender's own underwriting,
-                financial and verification procedures.
+                The assessment reflects the
+                business's transaction activity,
+                payment behaviour, financial
+                stability and business relationships
+                currently available through Credi.
+              </p>
+
+
+              <p>
+                It is intended to support lender
+                due diligence and should be
+                considered alongside the lender's
+                own underwriting and financial
+                assessment.
               </p>
 
             </div>
@@ -1292,27 +1639,33 @@ function LenderView() {
         </section>
 
 
-        {/* Verification */}
+        {/* =========================
+            INFORMATION AVAILABILITY
+        ========================= */}
 
         <section className="lender-section">
 
           <div className="lender-section-heading">
 
             <div>
+
               <p className="lender-label">
-                VERIFICATION
+                INFORMATION AVAILABILITY
               </p>
 
               <h2>
-                Information Availability
+                Business Information
               </h2>
+
             </div>
 
           </div>
 
+
           <div className="lender-verification">
 
             <div>
+
               <span>
                 Business Identity
               </span>
@@ -1322,9 +1675,12 @@ function LenderView() {
                   ? 'Available'
                   : 'Pending'}
               </strong>
+
             </div>
 
+
             <div>
+
               <span>
                 Business Details
               </span>
@@ -1334,9 +1690,12 @@ function LenderView() {
                   ? 'Available'
                   : 'Pending'}
               </strong>
+
             </div>
 
+
             <div>
+
               <span>
                 Transaction Evidence
               </span>
@@ -1346,6 +1705,7 @@ function LenderView() {
                   ? 'Available'
                   : 'Limited'}
               </strong>
+
             </div>
 
           </div>
@@ -1353,11 +1713,14 @@ function LenderView() {
         </section>
 
 
-        {/* Report information */}
+        {/* =========================
+            REPORT INFORMATION
+        ========================= */}
 
         <section className="lender-footer-info">
 
           <div>
+
             <span>
               Report Status
             </span>
@@ -1365,9 +1728,12 @@ function LenderView() {
             <strong>
               Read-only lender assessment
             </strong>
+
           </div>
 
+
           <div>
+
             <span>
               Assessment Type
             </span>
@@ -1375,18 +1741,26 @@ function LenderView() {
             <strong>
               Credi Business Trust Assessment
             </strong>
+
           </div>
 
         </section>
 
 
+        {/* =========================
+            DISCLAIMER
+        ========================= */}
+
         <p className="lender-disclaimer">
-          This report is provided to support lender
-          due diligence. Credi does not guarantee
-          repayment, credit approval or lending
-          decisions. Lenders should independently
-          verify information and perform their own
-          underwriting assessment.
+
+          This report is provided to support
+          lender due diligence. Credi does not
+          guarantee repayment, credit approval
+          or lending decisions. Lenders should
+          independently verify information and
+          perform their own underwriting
+          assessment.
+
         </p>
 
       </main>

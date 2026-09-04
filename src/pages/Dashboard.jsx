@@ -225,7 +225,7 @@ function Dashboard() {
             </h2>
 
             <span>
-              Calculated from business activity
+              Based on payment behaviour, transactions and financial stability
             </span>
 
           </div>
@@ -275,7 +275,49 @@ function Dashboard() {
         </section>
 
 
-        {/* Short summary generated from the available business data */}
+        {/* Trust score components */}
+        <section className="insights-section">
+
+          <h2>Trust Score Components</h2>
+
+          <div className="insight-box">
+
+            <div className="trust-component-row">
+              <span>Payment Behaviour</span>
+
+              <strong>
+                {loading
+                  ? '--'
+                  : trustScore?.payment_score ?? '--'}
+              </strong>
+            </div>
+
+            <div className="trust-component-row">
+              <span>Transaction Activity</span>
+
+              <strong>
+                {loading
+                  ? '--'
+                  : trustScore?.transaction_score ?? '--'}
+              </strong>
+            </div>
+
+            <div className="trust-component-row">
+              <span>Financial Stability</span>
+
+              <strong>
+                {loading
+                  ? '--'
+                  : trustScore?.financial_stability_score ?? '--'}
+              </strong>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* Business insights */}
         <section className="insights-section">
 
           <h2>Credi Insights</h2>
@@ -296,7 +338,8 @@ function Dashboard() {
                 <strong>{transactions.length}</strong>{' '}
                 recorded transaction(s).
 
-                {trustScore?.overall_score && (
+                {trustScore?.overall_score !== null &&
+                  trustScore?.overall_score !== undefined && (
                   <>
                     {' '}Your current trust score is{' '}
                     <strong>{trustScore.overall_score}</strong>.

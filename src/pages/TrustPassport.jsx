@@ -5,7 +5,6 @@ import { getTrustPassportData } from '../services/trustService'
 function TrustPassport() {
   const [business, setBusiness] = useState(null)
   const [trustScore, setTrustScore] = useState(null)
-  const [verifications, setVerifications] = useState([])
   const [documents, setDocuments] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -16,9 +15,7 @@ function TrustPassport() {
 
         setBusiness(data.business)
         setTrustScore(data.trustScore)
-        setVerifications(data.verifications)
-        setDocuments(data.documents)
-
+        setDocuments(data.documents || [])
       } catch (error) {
         console.error('Trust Passport loading error:', error)
       } finally {
@@ -29,31 +26,26 @@ function TrustPassport() {
     loadTrustPassport()
   }, [])
 
-
   function formatDate(date) {
     if (!date) return 'Not available'
 
-    return new Date(date).toLocaleDateString('en-IN', {
+    const parsedDate = new Date(date)
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return 'Not available'
+    }
+
+    return parsedDate.toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
     })
   }
 
-
-  const verifiedRecords = verifications.filter(
-    (record) => record.status === 'verified'
-  )
-
-  const pendingRecords = verifications.filter(
-    (record) => record.status !== 'verified'
-  )
-
-
   return (
     <div className="trust-passport-page">
 
-      {/* HEADER */}
+      {/* Page introduction */}
 
       <header className="trust-passport-header">
 
@@ -67,7 +59,7 @@ function TrustPassport() {
 
           <p>
             A consolidated view of your business credibility,
-            verification and trust performance.
+            financial behaviour and trust performance.
           </p>
 
         </div>
@@ -82,18 +74,25 @@ function TrustPassport() {
       )}
 
 
+      {!loading && !business && (
+        <p className="loading-message">
+          Business information is not available.
+        </p>
+      )}
+
+
       {!loading && business && (
 
         <>
 
-          {/* BUSINESS PROFILE */}
+          {/* Business profile */}
 
           <section className="passport-business-card">
 
             <div>
 
               <p className="section-label">
-                VERIFIED BUSINESS
+                BUSINESS PROFILE
               </p>
 
               <h2>
@@ -120,7 +119,7 @@ function TrustPassport() {
           </section>
 
 
-          {/* OVERALL TRUST SCORE */}
+          {/* Overall trust score */}
 
           <section className="trust-score-section">
 
@@ -142,19 +141,21 @@ function TrustPassport() {
 
               <p>
                 Calculated from payment behaviour,
-                verification and transaction activity.
+                transaction strength and financial stability.
               </p>
 
             </div>
 
 
-            {/* SCORE BREAKDOWN */}
+            {/* Score breakdown */}
 
             <div className="score-breakdown">
 
               <div className="score-item">
 
-                <span>Payment Score</span>
+                <span>
+                  Payment Score
+                </span>
 
                 <strong>
                   {trustScore?.payment_score ?? '--'}
@@ -165,18 +166,9 @@ function TrustPassport() {
 
               <div className="score-item">
 
-                <span>Verification Score</span>
-
-                <strong>
-                  {trustScore?.verification_score ?? '--'}
-                </strong>
-
-              </div>
-
-
-              <div className="score-item">
-
-                <span>Transaction Score</span>
+                <span>
+                  Transaction Score
+                </span>
 
                 <strong>
                   {trustScore?.transaction_score ?? '--'}
@@ -184,12 +176,25 @@ function TrustPassport() {
 
               </div>
 
+
+              <div className="score-item">
+
+                <span>
+                  Financial Stability
+                </span>
+
+                <strong>
+                  {trustScore?.financial_stability_score ?? '--'}
+                </strong>
+
+              </div>
+
             </div>
 
           </section>
 
 
-          {/* BUSINESS INFORMATION */}
+          {/* Business information */}
 
           <section className="business-details">
 
@@ -197,47 +202,65 @@ function TrustPassport() {
               BUSINESS INFORMATION
             </p>
 
-            <h2>Business Details</h2>
+            <h2>
+              Business Details
+            </h2>
 
             <div className="details-grid">
 
               <div>
-                <span>Industry</span>
+
+                <span>
+                  Industry
+                </span>
 
                 <strong>
                   {business.industry || 'Not available'}
                 </strong>
+
               </div>
 
 
               <div>
-                <span>Registration Number</span>
+
+                <span>
+                  Registration Number
+                </span>
 
                 <strong>
                   {business.registration_number ||
                     'Not available'}
                 </strong>
+
               </div>
 
 
               <div>
-                <span>Founded</span>
+
+                <span>
+                  Founded
+                </span>
 
                 <strong>
                   {business.founded_year ||
                     'Not available'}
                 </strong>
+
               </div>
 
 
               <div>
-                <span>Location</span>
+
+                <span>
+                  Location
+                </span>
 
                 <strong>
                   {[business.city, business.country]
                     .filter(Boolean)
                     .join(', ') || 'Not available'}
                 </strong>
+
               </div>
 
             </div>
@@ -245,7 +268,7 @@ function TrustPassport() {
           </section>
 
 
-          {/* VERIFICATION */}
+          {/* Financial trust indicators */}
 
           <section className="verification-section">
 
@@ -254,81 +277,147 @@ function TrustPassport() {
               <div>
 
                 <p className="section-label">
-                  BUSINESS VERIFICATION
+                  TRUST INDICATORS
                 </p>
 
-                <h2>Verification Records</h2>
+                <h2>
+                  What Influences Your Trust Score
+                </h2>
 
               </div>
-
-              <span>
-                {verifiedRecords.length} Verified
-              </span>
 
             </div>
 
 
-            {verifications.length === 0 && (
+            <div className="verification-row">
 
-              <p>
-                No verification records are available yet.
-              </p>
+              <div>
 
-            )}
+                <strong>
+                  Payment Behaviour
+                </strong>
 
-
-            {verifications.map((record) => (
-
-              <div
-                className="verification-row"
-                key={record.id}
-              >
-
-                <div>
-
-                  <strong>
-                    {record.verification_type}
-                  </strong>
-
-                  <span>
-                    {record.remarks ||
-                      'No additional remarks'}
-                  </span>
-
-                </div>
-
-
-                <div>
-
-                  <span>Score</span>
-
-                  <strong>
-                    {record.verification_score ?? '--'}
-                  </strong>
-
-                </div>
-
-
-                <div>
-
-                  <span>
-                    {record.status}
-                  </span>
-
-                  <small>
-                    {formatDate(record.verified_at)}
-                  </small>
-
-                </div>
+                <span>
+                  Measures how consistently the business
+                  completes its payments on time.
+                </span>
 
               </div>
 
-            ))}
+              <div>
+
+                <span>
+                  Score
+                </span>
+
+                <strong>
+                  {trustScore?.payment_score ?? '--'}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Trust Factor
+                </span>
+
+                <small>
+                  Payment reliability
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div className="verification-row">
+
+              <div>
+
+                <strong>
+                  Transaction Activity
+                </strong>
+
+                <span>
+                  Reflects the strength and consistency of
+                  recorded business transactions.
+                </span>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Score
+                </span>
+
+                <strong>
+                  {trustScore?.transaction_score ?? '--'}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Trust Factor
+                </span>
+
+                <small>
+                  Business activity
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div className="verification-row">
+
+              <div>
+
+                <strong>
+                  Financial Stability
+                </strong>
+
+                <span>
+                  Represents the financial stability indicated
+                  by the available business activity and data.
+                </span>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Score
+                </span>
+
+                <strong>
+                  {trustScore?.financial_stability_score ?? '--'}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Trust Factor
+                </span>
+
+                <small>
+                  Financial strength
+                </small>
+
+              </div>
+
+            </div>
 
           </section>
 
 
-          {/* DOCUMENTS */}
+          {/* Business documents */}
 
           <section className="documents-section">
 
@@ -340,7 +429,9 @@ function TrustPassport() {
                   BUSINESS DOCUMENTS
                 </p>
 
-                <h2>Document Records</h2>
+                <h2>
+                  Document Records
+                </h2>
 
               </div>
 
@@ -383,7 +474,7 @@ function TrustPassport() {
                 <div>
 
                   <span>
-                    {document.status || 'Unknown'}
+                    {document.status || 'Available'}
                   </span>
 
                   <small>
@@ -400,7 +491,7 @@ function TrustPassport() {
           </section>
 
 
-          {/* TRUST STATUS */}
+          {/* Trust summary */}
 
           <section className="trust-summary">
 
@@ -415,14 +506,15 @@ function TrustPassport() {
             </h2>
 
             <p>
-              Your Trust Passport combines your verification
-              records, transaction activity and payment behaviour
+              Your Trust Passport combines payment behaviour,
+              transaction activity and financial stability
               into a consolidated business trust profile.
             </p>
 
             <p>
-              {pendingRecords.length > 0 &&
-                `${pendingRecords.length} verification record(s) may still require attention.`}
+              The score is based on observed business
+              behaviour and available financial data rather
+              than a separate verification score.
             </p>
 
           </section>
