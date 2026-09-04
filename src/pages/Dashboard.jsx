@@ -14,6 +14,7 @@ function Dashboard() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Load the business information and dashboard data when the page opens
   useEffect(() => {
     async function loadDashboard() {
       try {
@@ -42,6 +43,7 @@ function Dashboard() {
     loadDashboard()
   }, [])
 
+  // Only completed and paid transactions are used for payment metrics
   const paidTransactions = transactions.filter((transaction) => {
     return (
       transaction.status?.toLowerCase() === 'paid' &&
@@ -50,6 +52,7 @@ function Dashboard() {
     )
   })
 
+  // Find payments that were completed on or before their due date
   const onTimeTransactions = paidTransactions.filter((transaction) => {
     const dueDate = new Date(transaction.due_date)
     const paidDate = new Date(transaction.paid_date)
@@ -57,6 +60,7 @@ function Dashboard() {
     return paidDate <= dueDate
   })
 
+  // Calculate the percentage of payments made on time
   const onTimePaymentRate =
     paidTransactions.length > 0
       ? Math.round(
@@ -64,6 +68,7 @@ function Dashboard() {
         )
       : null
 
+  // Calculate the delay in days for each completed payment
   const paymentDelays = paidTransactions.map((transaction) => {
     const dueDate = new Date(transaction.due_date)
     const paidDate = new Date(transaction.paid_date)
@@ -77,6 +82,7 @@ function Dashboard() {
     )
   })
 
+  // Calculate the average payment delay across completed transactions
   const averagePaymentDelay =
     paymentDelays.length > 0
       ? Math.round(
@@ -90,13 +96,15 @@ function Dashboard() {
   return (
     <div className="dashboard">
 
-      {/* Header */}
+      {/* Main dashboard header */}
       <header className="dashboard-header">
 
-        <div>
-          <h1>Credi</h1>
-          <p>Business Trust Intelligence</p>
-        </div>
+        <Link to="/dashboard" className="dashboard-brand">
+          <div>
+            <h1>Credi</h1>
+            <p>Business Trust Intelligence</p>
+          </div>
+        </Link>
 
         <div className="profile">
           <span>Welcome back</span>
@@ -111,41 +119,83 @@ function Dashboard() {
       </header>
 
 
-      {/* Navigation */}
+      {/* Primary navigation for the dashboard */}
       <nav className="dashboard-nav">
 
-        <Link to="/dashboard" className="nav-link active">
+        <Link
+          to="/dashboard"
+          className="nav-link active"
+        >
           Dashboard
         </Link>
 
-        <Link to="/transactions" className="nav-link">
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/transactions"
+          className="nav-link"
+        >
           Add Transaction
         </Link>
 
-        <Link to="/cash-flow" className="nav-link">
-          Cash Flow Watch
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/ask-credi"
+          className="nav-link"
+        >
+          Ask Credi
         </Link>
 
-        <Link to="/trust-passport" className="nav-link">
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/trust-passport"
+          className="nav-link"
+        >
           Trust Passport
         </Link>
 
-        <Link to="/exposure-review" className="nav-link">
-          Exposure Review
-        </Link>
+        <span className="nav-separator">|</span>
 
-        <Link to="/counterparty-profile" className="nav-link">
+        <Link
+          to="/counterparty-profile"
+          className="nav-link"
+        >
           Counterparty Profile
         </Link>
 
-        <Link to="/lender" className="nav-link">
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/exposure-review"
+          className="nav-link"
+        >
+          Exposure Review
+        </Link>
+
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/cash-flow"
+          className="nav-link"
+        >
+          Cash Flow Watch
+        </Link>
+
+        <span className="nav-separator">|</span>
+
+        <Link
+          to="/lender"
+          className="nav-link"
+        >
           Lender View
         </Link>
 
       </nav>
 
 
-      {/* Main content */}
+      {/* Main dashboard information */}
       <main className="dashboard-content">
 
         <section className="welcome-section">
@@ -159,7 +209,7 @@ function Dashboard() {
         </section>
 
 
-        {/* Stats */}
+        {/* Key business metrics */}
         <section className="stats-grid">
 
           <div className="stat-card">
@@ -225,7 +275,7 @@ function Dashboard() {
         </section>
 
 
-        {/* Insights */}
+        {/* Short summary generated from the available business data */}
         <section className="insights-section">
 
           <h2>Credi Insights</h2>
@@ -267,7 +317,7 @@ function Dashboard() {
         </section>
 
 
-        {/* Quick actions */}
+        {/* Small shortcuts for commonly used actions */}
         <section className="quick-actions">
 
           <h2>Quick Actions</h2>
@@ -279,10 +329,7 @@ function Dashboard() {
               className="quick-action-card"
             >
               <strong>Add Transaction</strong>
-
-              <span>
-                Record a new business transaction
-              </span>
+              <span>Record a new transaction</span>
             </Link>
 
 
@@ -290,11 +337,8 @@ function Dashboard() {
               to="/cash-flow"
               className="quick-action-card"
             >
-              <strong>View Cash Flow</strong>
-
-              <span>
-                Monitor incoming and outgoing payments
-              </span>
+              <strong>Cash Flow</strong>
+              <span>Monitor payment activity</span>
             </Link>
 
 
@@ -303,10 +347,7 @@ function Dashboard() {
               className="quick-action-card"
             >
               <strong>Trust Passport</strong>
-
-              <span>
-                View your business trust profile
-              </span>
+              <span>View your trust profile</span>
             </Link>
 
 
@@ -315,10 +356,7 @@ function Dashboard() {
               className="quick-action-card"
             >
               <strong>Exposure Review</strong>
-
-              <span>
-                Analyse financial exposure
-              </span>
+              <span>Analyse financial exposure</span>
             </Link>
 
 
@@ -327,10 +365,7 @@ function Dashboard() {
               className="quick-action-card"
             >
               <strong>Lender View</strong>
-
-              <span>
-                View the read-only business assessment for lenders
-              </span>
+              <span>Business assessment for lenders</span>
             </Link>
 
           </div>
@@ -338,6 +373,14 @@ function Dashboard() {
         </section>
 
       </main>
+
+
+      {/* Small footer for the dashboard */}
+      <footer className="dashboard-footer">
+        <span>
+          @Credi - made by team Wealth Without Walls
+        </span>
+      </footer>
 
     </div>
   )

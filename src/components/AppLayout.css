@@ -1,25 +1,22 @@
-/* =========================
-   APP LAYOUT
-========================= */
+/*  
+   Overall app layout
+    */
 
 .app-layout {
   min-height: 100vh;
-
   display: flex;
 
   background: #07111f;
-
   color: #f4f7fb;
 }
 
 
-/* =========================
-   SIDEBAR
-========================= */
+/*  
+   Left sidebar
+    */
 
 .sidebar {
-  width: 250px;
-
+  width: 268px;
   min-height: 100vh;
 
   display: flex;
@@ -27,202 +24,406 @@
 
   box-sizing: border-box;
 
-  background: #091625;
-
-  border-right: 1px solid #1d2c40;
-
-  padding: 28px 18px;
-
   position: fixed;
-
   left: 0;
   top: 0;
   bottom: 0;
+
+  z-index: 100;
+
+  background: #091625;
+
+  border-right: 1px solid #1b2b3f;
+
+  padding: 24px 14px 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #26374b transparent;
 }
 
 
-/* =========================
-   LOGO
-========================= */
+/* Keeps the sidebar scrollbar subtle */
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #26374b;
+  border-radius: 10px;
+}
+
+
+/*  
+   Credi logo and brand
+    */
 
 .sidebar-logo {
-  padding: 0 12px 28px;
-
-  border-bottom: 1px solid #1d2c40;
-}
-
-.sidebar-logo h1 {
-  margin: 0;
-
-  color: #d4af37;
-
-  font-size: 25px;
-
-  font-weight: 700;
-}
-
-.sidebar-logo span {
-  display: block;
-
-  margin-top: 5px;
-
-  color: #718094;
-
-  font-size: 11px;
-}
-
-
-/* =========================
-   NAVIGATION
-========================= */
-
-.sidebar-nav {
-  flex: 1;
-
-  padding-top: 25px;
-}
-
-.nav-section {
-  margin: 20px 12px 8px;
-
-  color: #65758a;
-
-  font-size: 10px;
-
-  font-weight: 700;
-
-  letter-spacing: 1.4px;
-}
-
-.nav-section:first-child {
-  margin-top: 0;
-}
-
-
-/* =========================
-   NAV ITEM
-========================= */
-
-.nav-item {
   display: flex;
-
   align-items: center;
 
   gap: 12px;
 
-  margin-bottom: 4px;
+  padding: 4px 12px 23px;
 
-  padding: 11px 12px;
-
-  border: 1px solid transparent;
-
-  border-radius: 7px;
-
-  color: #9ba9ba;
+  border-bottom: 1px solid #1b2b3f;
 
   text-decoration: none;
 
-  font-size: 13px;
+  cursor: pointer;
 
-  font-weight: 500;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
-.nav-item span {
-  width: 20px;
 
-  display: inline-flex;
+/* Slight feedback when hovering over the Credi logo */
 
+.sidebar-logo:hover {
+  opacity: 0.9;
+}
+
+
+/* Gold C used as the brand mark */
+
+.brand-mark {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
   justify-content: center;
 
-  color: #718094;
+  border-radius: 9px;
 
-  font-size: 15px;
+  background: #d4af37;
+  color: #07111f;
+
+  font-size: 18px;
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.12);
 }
 
-.nav-item:hover {
-  background: #0d1a2b;
+
+/* Brand name and subtitle */
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-text h1 {
+  margin: 0;
 
   color: #f4f7fb;
-}
 
-.nav-item:hover span {
-  color: #d4af37;
-}
-
-
-/* =========================
-   ACTIVE PAGE
-========================= */
-
-.nav-item.active {
-  background: #101f32;
-
-  border-color: #26374b;
-
-  color: #f4f7fb;
-}
-
-.nav-item.active span {
-  color: #d4af37;
-}
-
-
-/* =========================
-   SIDEBAR FOOTER
-========================= */
-
-.sidebar-footer {
-  padding: 18px 12px 0;
-
-  border-top: 1px solid #1d2c40;
-}
-
-.sidebar-footer span {
-  display: block;
-
-  color: #d4af37;
-
-  font-size: 12px;
-
+  font-size: 20px;
   font-weight: 700;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.3px;
 }
 
-.sidebar-footer small {
+.brand-text span {
   display: block;
 
   margin-top: 5px;
 
-  color: #58687b;
+  color: #68798d;
 
-  font-size: 10px;
+  font-size: 9px;
+  font-weight: 600;
 
-  line-height: 1.5;
+  letter-spacing: 0.25px;
+
+  white-space: nowrap;
 }
 
 
-/* =========================
-   MAIN CONTENT
-========================= */
+/*  
+   Navigation area
+    */
+
+.sidebar-nav {
+  flex: 1;
+
+  padding-top: 20px;
+}
+
+
+/* Keeps different groups visually separated */
+
+.nav-group {
+  margin-bottom: 22px;
+}
+
+
+/* Small labels such as MAIN and TRUST INTELLIGENCE */
+
+.nav-section {
+  margin: 0 12px 8px;
+
+  color: #596b80;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  line-height: 1.4;
+}
+
+
+/*  
+   Navigation links
+    */
+
+.nav-item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-bottom: 3px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  color: #8797aa;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+
+/* Keeps all navigation icons aligned */
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #62748a;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+
+/* Stops longer navigation names from wrapping */
+
+.nav-label {
+  white-space: nowrap;
+}
+
+
+/*  
+   Navigation hover effect
+    */
+
+.nav-item:hover {
+  background: #0d1b2d;
+
+  border-color: #182a3f;
+
+  color: #e9edf2;
+
+  transform: translateX(2px);
+}
+
+.nav-item:hover .nav-icon {
+  color: #d4af37;
+}
+
+
+/*  
+   Currently selected page
+    */
+
+.nav-item.active {
+  background: linear-gradient(
+    90deg,
+    #122338 0%,
+    #0f1d2f 100%
+  );
+
+  border-color: #26384d;
+
+  color: #f4f7fb;
+
+  box-shadow:
+    inset 3px 0 0 #d4af37,
+    0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.nav-item.active .nav-icon {
+  color: #d4af37;
+}
+
+
+/* Small gold dot showing the current page */
+
+.nav-item.active::after {
+  content: '';
+
+  position: absolute;
+
+  right: 10px;
+  top: 50%;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #d4af37;
+
+  transform: translateY(-50%);
+}
+
+
+/*  
+   Bottom part of sidebar
+    */
+
+.sidebar-footer {
+  padding: 16px 12px 2px;
+
+  border-top: 1px solid #1b2b3f;
+}
+
+
+/* Platform name and indicator */
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+
+/* Small gold indicator */
+
+.footer-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #d4af37;
+
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+
+/* Footer text */
+
+.footer-brand span {
+  display: block;
+
+  color: #aab6c4;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.footer-brand small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #52647a;
+
+  font-size: 9px;
+
+  line-height: 1.4;
+}
+
+
+/* Shows that the platform is running */
+
+.footer-status {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 13px;
+
+  color: #53657a;
+
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #5dbb91;
+
+  box-shadow:
+    0 0 0 3px rgba(93, 187, 145, 0.07);
+}
+
+
+/*  
+   Main content area
+    */
 
 .app-main {
-  width: calc(100% - 250px);
+  width: calc(100% - 268px);
 
   min-height: 100vh;
 
-  margin-left: 250px;
+  margin-left: 268px;
 
   box-sizing: border-box;
 }
 
 
-/* =========================
-   DASHBOARD WITHOUT SIDEBAR
-========================= */
+/* Dashboard pages that don't use the sidebar */
 
 .dashboard-main {
   width: 100%;
@@ -231,25 +432,167 @@
 }
 
 
-/* =========================
-   MOBILE
-========================= */
+/*  
+   Tablet screens
+    */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
 
   .sidebar {
-    width: 210px;
+    width: 235px;
   }
 
   .app-main {
-    width: calc(100% - 210px);
+    width: calc(100% - 235px);
 
-    margin-left: 210px;
+    margin-left: 235px;
   }
 
   .dashboard-main {
     width: 100%;
-
     margin-left: 0;
   }
+
+}
+
+
+/*  
+   Smaller screens
+    */
+
+@media (max-width: 700px) {
+
+  .sidebar {
+    width: 220px;
+
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .app-main {
+    width: calc(100% - 220px);
+
+    margin-left: 220px;
+  }
+
+  .dashboard-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .brand-text span {
+    font-size: 8px;
+  }
+
+}
+
+
+/*  
+   Very small screens
+    */
+
+@media (max-width: 550px) {
+
+  .sidebar {
+    width: 72px;
+
+    padding: 20px 8px 15px;
+
+    align-items: center;
+  }
+
+  .sidebar-logo {
+    justify-content: center;
+
+    padding: 4px 0 20px;
+
+    width: 100%;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .brand-text {
+    display: none;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+  }
+
+  .nav-section {
+    display: none;
+  }
+
+  .nav-group {
+    margin-bottom: 12px;
+  }
+
+  .nav-item {
+    justify-content: center;
+
+    padding: 11px 8px;
+
+    margin-bottom: 5px;
+  }
+
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+
+    font-size: 16px;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .nav-item.active {
+    box-shadow:
+      inset 3px 0 0 #d4af37;
+  }
+
+  .nav-item.active::after {
+    display: none;
+  }
+
+  .sidebar-footer {
+    width: 100%;
+
+    padding: 15px 0 0;
+
+    display: flex;
+    justify-content: center;
+  }
+
+  .footer-brand {
+    justify-content: center;
+  }
+
+  .footer-brand > div:last-child {
+    display: none;
+  }
+
+  .footer-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .footer-status {
+    display: none;
+  }
+
+  .app-main {
+    width: calc(100% - 72px);
+
+    margin-left: 72px;
+  }
+
+  .dashboard-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
 }
